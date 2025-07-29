@@ -85,8 +85,8 @@ public class Ai implements ModInitializer {
 				entities.aie,AIEnt.createAttributes()
 		);
 
-		LLMAPI Client = new LLMAPI("https://openrouter.ai/api/v1/chat/completions","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","deepseek/deepseek-r1-0528:free");
-
+		//LLMAPI Client = new LLMAPI("https://openrouter.ai/api/v1/chat/completions","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","deepseek/deepseek-r1-0528:free");
+		LLMAPI Client = new LLMAPI("https://maas-api.cn-huabei-1.xf-yun.com/v1/chat/completions","sk-nilvCZ5ThRx9OVg10583E98a19E146888593Dc24A67b9a39","xdeepseekv3");
 
 
 

@@ -47,7 +47,8 @@ public class Ai implements ModInitializer {
 							try{
 								dispatcher.execute(cmd,sender.getCommandSource());
 							}catch (CommandSyntaxException e){
-								return exe(sender,Client,e.getMessage());
+								//return exe(sender,Client,e.getMessage());
+								return CompletableFuture.completedFuture(null);
 							}
 						}
 						return CompletableFuture.completedFuture(null);

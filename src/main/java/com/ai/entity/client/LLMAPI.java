@@ -67,7 +67,7 @@ public class LLMAPI {
             String res = matcher.replaceAll("");
             return new String[] {res,command};
         }else{
-            return new String[]{s,""};
+            return null;
         }
     }
 

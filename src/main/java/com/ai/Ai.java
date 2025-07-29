@@ -33,24 +33,26 @@ public class Ai implements ModInitializer {
 	public static CompletableFuture<Void> exe(ServerPlayerEntity sender, LLMAPI Client, String message){
 		return CompletableFuture.supplyAsync(() -> Client.Call(sender.getPos().toString(),message.replace("ask ","").replace("CLEARCTX","")))
 				.thenCompose((response) -> {
-					Ai.LOGGER.info(response[1]);
-					sender.sendMessage(Text.literal("[God]: " + response[0]),false);
+					if(response!=null){
 
-					CommandDispatcher<ServerCommandSource> dispatcher =
-							sender.getServer().getCommandManager().getDispatcher();
+						Ai.LOGGER.info(response[1]);
+						sender.sendMessage(Text.literal("[God]: " + response[0]),false);
+
+						CommandDispatcher<ServerCommandSource> dispatcher =
+								sender.getServer().getCommandManager().getDispatcher();
 
 
-					String[] cmds = response[1].split("\\R");
-					for (String cmd : cmds) {
-						try{
-							dispatcher.execute(cmd,sender.getCommandSource());
-						}catch (CommandSyntaxException e){
-							return exe(sender,Client,e.getMessage());
+						String[] cmds = response[1].split("\\R");
+						for (String cmd : cmds) {
+							try{
+								dispatcher.execute(cmd,sender.getCommandSource());
+							}catch (CommandSyntaxException e){
+								return exe(sender,Client,e.getMessage());
+							}
 						}
-					}
-					return CompletableFuture.completedFuture(null);
+						return CompletableFuture.completedFuture(null);
 
-					// 解析并执行命令
+						// 解析并执行命令
 							/*
 							processStringByLines(response[1], item -> {
 								try {
@@ -61,6 +63,10 @@ public class Ai implements ModInitializer {
 									e.printStackTrace();
 								}
 							});*/
+					}else {
+						return CompletableFuture.completedFuture(null);
+					}
+
 
 
 				});

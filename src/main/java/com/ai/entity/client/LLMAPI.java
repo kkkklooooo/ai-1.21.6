@@ -152,27 +152,27 @@ give @p dirt
     - `slot` 可选值: `any`, `hand`, `armor`, `mainhand`, `offhand`, `head`, `chest`, `legs`, `feet`, `body`。 默认值: `any`。
     - `operation` 可选值: `add_value`, `add_multiplied_base`, `add_multiplied_total`。
     - `display.type` 可选值: `default`, `hidden`, `override`。
-    - 示例: `/give @s stick[attribute_modifiers=[{type:"minecraft:scale",slot:"hand",id:"example:grow",amount:4,operation:"add_multiplied_base"}]]`
+    - 示例: `/give @p stick[attribute_modifiers=[{type:"minecraft:scale",slot:"hand",id:"example:grow",amount:4,operation:"add_multiplied_base"}]]`
 2.  **block_entity_data** (方块实体数据)
     - 类型：`minecraft:block_entity_data` (NBT Compound)
     - 值: 方块实体NBT数据 (不包含 `x`, `y`, `z`, `id`, `components`, `keepPacked`)
-    - 示例: `/give @s spawner[block_entity_data={id:"mob_spawner",SpawnData:{entity:{id:"spider"}}}]`
+    - 示例: `/give @p spawner[block_entity_data={id:"mob_spawner",SpawnData:{entity:{id:"spider"}}}]`
 
 3.  **block_state** (方块状态)
     - 类型：`minecraft:block_state` (NBT Compound)
     - 值: `{<方块状态键>:"<方块状态值>", ...}`
-    - 示例: `/give @s bamboo_slab[block_state={type:"top"}]`
+    - 示例: `/give @p bamboo_slab[block_state={type:"top"}]`
 4.  **custom_name** (自定义名称)
     - 类型：`minecraft:custom_name` (Text Component)
-    - 示例: `/give @s stick[custom_name={text:"Magic Wand",color:"light_purple",italic:false}]`
+    - 示例: `/give @p stick[custom_name={text:"Magic Wand",color:"light_purple",italic:false}]`
 5.  **enchantments** (附魔)
     - 类型：`minecraft:enchantments` (NBT Compound)
     - 值：`{<附魔ID>:<等级整数>, ...}`
-    - 示例: `/give @s wooden_sword[enchantments={sharpness:3,knockback:2}]`
+    - 示例: `/give @p wooden_sword[enchantments={sharpness:3,knockback:2}]`
 6.  **entity_data** (实体数据)
     - 类型：`minecraft:entity_data` (NBT Compound)
     - 值: 实体NBT数据 (必须包含 `id` 标签)
-    - 示例: `/give @s armor_stand[entity_data={id:"armor_stand",Small:1b}]`
+    - 示例: `/give @p armor_stand[entity_data={id:"armor_stand",Small:1b}]`
 现在开始用以下格式回应玩家：
 1. 回复玩家
 2. (可选)发送代码块""";

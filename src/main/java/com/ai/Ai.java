@@ -29,7 +29,7 @@ public class Ai implements ModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-
+	public static String inp="";
 	public static CompletableFuture<Void> exe(ServerPlayerEntity sender, LLMAPI Client, String message){
 		return CompletableFuture.supplyAsync(() -> Client.Call(sender.getPos().toString(),message.replace("ask ","").replace("CLEARCTX","")))
 				.thenCompose((response) -> {
@@ -100,7 +100,16 @@ public class Ai implements ModInitializer {
 				if(message.getContent().getString().contains("CLEARCTX")){
 					Client.ClearContext();
 				}
-				exe(sender,Client,message.getContent().getString());
+				inp+=message.getContent().getString().replace("...","");
+				if(message.getContent().getString().endsWith("...")){
+
+					Ai.LOGGER.info("继续");
+				}else{
+					inp="";
+					exe(sender,Client,inp);
+				}
+
+
 
 
 

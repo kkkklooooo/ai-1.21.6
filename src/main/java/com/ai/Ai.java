@@ -1,16 +1,22 @@
 package com.ai;
 
 import com.ai.entity.client.LLMAPI;
+import com.ai.entity.client.ModConfig;
+import com.ai.entity.client.ModConfigScreen;
 import com.ai.entity.custom.AIEnt;
 import com.ai.entity.entities;
+import com.google.gson.JsonSerializer;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.network.message.SignedMessage;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
@@ -47,8 +53,9 @@ public class Ai implements ModInitializer {
 							try{
 								dispatcher.execute(cmd,sender.getCommandSource());
 							}catch (CommandSyntaxException e){
-								//return exe(sender,Client,e.getMessage());
 								Ai.LOGGER.error(e.getMessage());
+								//return exe(sender,Client,e.getMessage());
+
 								return CompletableFuture.completedFuture(null);
 							}
 						}
@@ -77,6 +84,7 @@ public class Ai implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		AutoConfig.register(ModConfig.class, JanksonConfigSerializer::new);
 		entities.register();
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
@@ -114,7 +122,10 @@ public class Ai implements ModInitializer {
 
 
 
-            }
+            }else if(message.getContent().getString().startsWith("CONFIG")){
+				Screen s = AutoConfig.getConfigScreen(ModConfig.class, MinecraftClient.getInstance().currentScreen).get();
+				MinecraftClient.getInstance().setScreen(s);
+			}
 		}));
 	}
 

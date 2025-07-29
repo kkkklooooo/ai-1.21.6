@@ -79,7 +79,7 @@ public class Ai implements ModInitializer {
 				entities.aie,AIEnt.createAttributes()
 		);
 
-		LLMAPI Client = new LLMAPI("http://127.0.0.1:8848/models/qwen3-235b-a22b","9","qwen3-235b-a22b");
+		LLMAPI Client = new LLMAPI("https://openrouter.ai/api/v1/chat/completions","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","deepseek/deepseek-r1-0528:free");
 
 
 

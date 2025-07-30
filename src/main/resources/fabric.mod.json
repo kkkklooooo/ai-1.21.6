@@ -2,14 +2,14 @@
 	"schemaVersion": 1,
 	"id": "ai",
 	"version": "${version}",
-	"name": "ai",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"name": "AIE",
+	"description": "Fuck AI God",
 	"authors": [
-		"Me!"
+		"BP Project"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://github.com/kkkklooooo/ai-1.21.6",
+		"sources": "https://github.com/kkkklooooo/ai-1.21.6"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/ai/icon.png",
@@ -32,7 +32,8 @@
 		"fabricloader": ">=0.16.14",
 		"minecraft": "~1.21.6",
 		"java": ">=21",
-		"fabric-api": "*"
+		"fabric-api": "*",
+		"cloth-config2": "19.0.146"
 	},
 	"suggests": {
 		"another-mod": "*"

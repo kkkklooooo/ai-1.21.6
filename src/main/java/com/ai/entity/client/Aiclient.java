@@ -56,14 +56,14 @@ public class Aiclient implements ClientModInitializer {
         );
         EntityModelLayerRegistry.registerModelLayer(AIERenderer.MODEL_CUBE_LAYER, AIEmd::getTexturedModelData);
         exampleKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.modid.action", // 翻译键（需在语言文件定义）
+                "key.ai.action", // 翻译键（需在语言文件定义）
                 InputUtil.Type.KEYSYM, // 键盘类型（KEYSYM 或 MOUSE）
                 GLFW.GLFW_KEY_R,     // 默认按键（如 R 键）
-                "category.modid.test" // 分类翻译键
+                "category.ai.test" // 分类翻译键
         ));
 
         ServerMessageEvents.CHAT_MESSAGE.register(((message, sender, params) -> {
-            if(message.getContent().getString().startsWith("ask")){
+            if(message.getContent().getString().startsWith("aieask")){
                 if(message.getContent().getString().contains("CLEARCTX")){
                     Client.ClearContext();
                 }

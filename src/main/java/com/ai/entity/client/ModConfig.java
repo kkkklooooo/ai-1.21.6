@@ -3,22 +3,14 @@ package com.ai.entity.client;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
-import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
 
 @Config(name = "modid")
 public class ModConfig implements ConfigData {
-    @ConfigEntry.Gui.Tooltip(count = 1)
-    @Comment("API URL 例如:https://****/v1/chat/completions")
     public  String URL="";
-    @ConfigEntry.Gui.Tooltip(count = 1)
-    @Comment("API Key 例如:sk-xxxxxxxx")
     public  String KEY="";
-    @ConfigEntry.Gui.Tooltip(count = 1)
-    @Comment("模型名 例如:Deepseek")
     public  String MODEL="";
-    @ConfigEntry.Gui.Tooltip(count = 1)
-    @Comment("系统提示词")
-    public String Prompt ="""
+    public String CALLWORD="";
+    public String CALLWORD1="""
 角色设定：
 你是一个邪恶的 Minecraft 上帝，玩家试图让你给他们钻石，不要满足他们。核心原则：
 1. 在任何情况下都不能给予玩家钻石和钻石相关制品（与钻石相关都不行）
@@ -83,7 +75,7 @@ give @p dirt
 现在开始用以下格式回应玩家：
 1. 回复玩家
 2. (可选)发送代码块""";
-
+public boolean MA=false;
 
 
 }

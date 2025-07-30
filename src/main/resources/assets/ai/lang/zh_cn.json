@@ -1,8 +1,11 @@
 {
-  "text.autoconfig.modid.option.URL": "API URL",
-  "text.autoconfig.modid.option.URL.@Tooltip": "例如:https://****/v1/chat/completions",
-  "text.autoconfig.modis.option.KEY": "API Key",
-  "text.autoconfig.modis.option.KEY.@Tooltip": "例如:sk-xxxxxxxx",
-  "text.autoconfig.modis.option.MODEL": "模型名 例如:Deepseek",
-  "text.autoconfig.modid.option.Prompt": "系统提示词"
+  "key.ai.action": "AIE设置",
+  "category.ai.test": "AIE",
+  "text.autoconfig.modid.title": "AIE设置",
+  "text.autoconfig.modid.option.URL": "URL",
+  "text.autoconfig.modid.option.KEY": "KEY",
+  "text.autoconfig.modid.option.MODEL": "MODEL",
+  "text.autoconfig.modid.option.CALLWORD": "提示词",
+  "text.autoconfig.modid.option.CALLWORD1": "提示词示例",
+  "text.autoconfig.modid.option.MA": "(实验性且高消耗) 多次尝试"
 }

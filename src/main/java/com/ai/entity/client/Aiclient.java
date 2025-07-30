@@ -4,6 +4,8 @@ import com.ai.Ai;
 import com.ai.entity.custom.AIEnt;
 import com.ai.entity.entities;
 import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.ConfigData;
+import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -18,6 +20,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
+import net.minecraft.util.ActionResult;
 import org.lwjgl.glfw.GLFW;
 
 import static com.ai.Ai.config;
@@ -30,12 +33,22 @@ public class Aiclient implements ClientModInitializer {
 
 
     private static KeyBinding exampleKey;
-
+    public LLMAPI Client;
 
     @Override
     public void onInitializeClient() {
 
-        AutoConfig.register(ModConfig.class, JanksonConfigSerializer::new);
+
+
+        ConfigHolder ch = AutoConfig.register(ModConfig.class, JanksonConfigSerializer::new);
+        ch.registerLoadListener((manager,data)->{
+            Updata((ModConfig) data);
+            return ActionResult.SUCCESS;
+        });
+        ch.registerSaveListener((manager,data)->{
+            Updata((ModConfig) data);
+            return ActionResult.SUCCESS;
+        });
         EntityRendererRegistry.register(
                 entities.aie,(ctx -> new AIERenderer(ctx))
         );
@@ -51,7 +64,8 @@ public class Aiclient implements ClientModInitializer {
                 if(config==null)
                 {
                     config=AutoConfig.getConfigHolder(ModConfig.class).getConfig();
-                    LLMAPI Client = new LLMAPI(config.URL,config.KEY,config.MODEL);
+                    //Ai.LOGGER.info(config.URL);
+                    Client = new LLMAPI(config.URL,config.KEY,config.MODEL);
 
 
                     ServerMessageEvents.CHAT_MESSAGE.register(((message, sender, params) -> {
@@ -74,12 +88,19 @@ public class Aiclient implements ClientModInitializer {
                     MinecraftClient.getInstance().setScreen(s);
                 }
                 else {
+                    //Ai.LOGGER.info(config.URL);
+                    //Client = new LLMAPI(config.URL,config.KEY,config.MODEL);
                     Screen s = AutoConfig.getConfigScreen(ModConfig.class, MinecraftClient.getInstance().currentScreen).get();
                     MinecraftClient.getInstance().setScreen(s);
                 }
 
             }
         });
+    }
+
+    private void Updata(ModConfig data) {
+        Ai.LOGGER.info(data.URL);
+        Client = new LLMAPI(data.URL, data.KEY, data.MODEL);
     }
     //LLMAPI Client = new LLMAPI("https://openrouter.ai/api/v1/chat/completions","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","deepseek/deepseek-r1-0528:free");
     }

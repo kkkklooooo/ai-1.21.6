@@ -37,7 +37,7 @@ public class Ai implements ModInitializer {
 	// It is considered best practice to use your mod id as the logger's name.
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-
+	public static int num=0;
 	public static ModConfig config;
 	public static CompletableFuture<Void> exe(ServerPlayerEntity sender, LLMAPI Client, String message,String output){
 		if(config.MA)
@@ -58,10 +58,16 @@ public class Ai implements ModInitializer {
 								try{
 									dispatcher.execute(cmd,sender.getCommandSource());
 								}catch (CommandSyntaxException e){
+									if(num>=config.MATime){
+										num=0;
+										return CompletableFuture.completedFuture(null);
+									}
 									Ai.LOGGER.error(e.getMessage());
+									num++;
 									return exe(sender,Client,e.getMessage(),e.getMessage());
 								}
 							}
+							num = 0;
 							return CompletableFuture.completedFuture(null);
 
 							// 解析并执行命令

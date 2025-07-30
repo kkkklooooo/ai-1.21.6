@@ -2,6 +2,8 @@ package com.ai.entity.client;
 
 import com.ai.entity.custom.AIEnt;
 import com.ai.entity.entities;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -18,6 +20,8 @@ public class Aiclient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
 
+        AutoConfig.register(ModConfig.class, JanksonConfigSerializer::new);
+        AutoConfig.getConfigHolder(ModConfig.class).getConfig();
         EntityRendererRegistry.register(
                 entities.aie,(ctx -> new AIERenderer(ctx))
         );

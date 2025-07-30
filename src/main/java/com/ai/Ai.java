@@ -10,6 +10,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 
@@ -35,6 +36,7 @@ public class Ai implements ModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
+	public static ModConfig config;
 	public static String inp="";
 	public static CompletableFuture<Void> exe(ServerPlayerEntity sender, LLMAPI Client, String message){
 		return CompletableFuture.supplyAsync(() -> Client.Call(sender.getPos().toString(),message.replace("ask ","").replace("CLEARCTX","")))
@@ -84,19 +86,21 @@ public class Ai implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		AutoConfig.register(ModConfig.class, JanksonConfigSerializer::new);
+
 		entities.register();
+
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 
+		config=AutoConfig.getConfigHolder(ModConfig.class).getConfig();
 		LOGGER.info("Hello Fabric world!");
 		FabricDefaultAttributeRegistry.register(
 				entities.aie,AIEnt.createAttributes()
 		);
 
 		//LLMAPI Client = new LLMAPI("https://openrouter.ai/api/v1/chat/completions","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","deepseek/deepseek-r1-0528:free");
-		LLMAPI Client = new LLMAPI("https://maas-api.cn-huabei-1.xf-yun.com/v1/chat/completions","sk-nilvCZ5ThRx9OVg10583E98a19E146888593Dc24A67b9a39","xdeepseekv3");
+		LLMAPI Client = new LLMAPI(config.URL,config.KEY,config.MODEL);
 
 
 

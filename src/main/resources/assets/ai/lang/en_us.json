@@ -7,5 +7,5 @@
   "text.autoconfig.modid.option.MODEL": "MODEL",
   "text.autoconfig.modid.option.CALLWORD": "CALLWORD",
   "text.autoconfig.modid.option.CALLWORD1": "EXAMPLE CALLWORD",
-  "text.autoconfig.modid.option.MA": "(Experimental and High Consumption) Multiple Attempt"
+  "text.autoconfig.modid.option.MA": "(Experimental and High Consumption) Multiple Attempt(Require reboot Minecraft)"
 }

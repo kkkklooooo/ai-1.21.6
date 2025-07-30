@@ -26,6 +26,7 @@ public class LLMAPI {
         AddSys(this.messages);
     }
     public String[] Call(String Pos,String Prompt,String output){
+        Ai.LOGGER.warn("Call AI with Prompt %s %s".formatted(Prompt,output));
         try{
             JsonObject bd = buildOpenAIRequest(Prompt,model,Pos,this.messages,output);
             HttpRequest req= HttpRequest.newBuilder()
@@ -112,7 +113,7 @@ public class LLMAPI {
     }
 
     private static void AddSys(JsonArray messages) {
-        String SysP =Ai.config.Prompt;
+        String SysP =Ai.config.CALLWORD1;
 
 /*
         String eng= """

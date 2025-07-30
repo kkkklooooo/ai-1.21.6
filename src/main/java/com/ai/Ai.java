@@ -40,12 +40,46 @@ public class Ai implements ModInitializer {
 
 	public static ModConfig config;
 	public static CompletableFuture<Void> exe(ServerPlayerEntity sender, LLMAPI Client, String message){
+		if(config.MA)
+		{
+			return CompletableFuture.supplyAsync(() -> Client.Call(sender.getPos().toString(),message.replace("ask ","").replace("CLEARCTX","")))
+					.thenCompose((response) -> {
+						if(response!=null){
+
+							Ai.LOGGER.info(response[1]);
+							sender.sendMessage(Text.literal("[AIE]: " + response[0]),false);
+
+							CommandDispatcher<ServerCommandSource> dispatcher =
+									sender.getServer().getCommandManager().getDispatcher();
+
+
+							String[] cmds = response[1].split("\\R");
+							for (String cmd : cmds) {
+								try{
+									dispatcher.execute(cmd,sender.getCommandSource());
+								}catch (CommandSyntaxException e){
+									Ai.LOGGER.error(e.getMessage());
+									return exe(sender,Client,e.getMessage());
+								}
+							}
+							return CompletableFuture.completedFuture(null);
+
+							// 解析并执行命令
+
+						}else {
+							return CompletableFuture.completedFuture(null);
+						}
+
+
+
+					});
+		}
 		return CompletableFuture.supplyAsync(() -> Client.Call(sender.getPos().toString(),message.replace("ask ","").replace("CLEARCTX","")))
 				.thenCompose((response) -> {
 					if(response!=null){
 
 						Ai.LOGGER.info(response[1]);
-						sender.sendMessage(Text.literal("[God]: " + response[0]),false);
+						sender.sendMessage(Text.literal("[AIE]: " + response[0]),false);
 
 						CommandDispatcher<ServerCommandSource> dispatcher =
 								sender.getServer().getCommandManager().getDispatcher();
@@ -65,16 +99,7 @@ public class Ai implements ModInitializer {
 						return CompletableFuture.completedFuture(null);
 
 						// 解析并执行命令
-							/*
-							processStringByLines(response[1], item -> {
-								try {
-									dispatcher.execute(item, sender.getCommandSource());
-								} catch (CommandSyntaxException e) {
-									// 如果命令执行过程中出现错误，捕获并打印异常
 
-									e.printStackTrace();
-								}
-							});*/
 					}else {
 						return CompletableFuture.completedFuture(null);
 					}

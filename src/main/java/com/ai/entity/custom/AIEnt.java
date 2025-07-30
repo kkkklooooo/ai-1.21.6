@@ -53,7 +53,7 @@ public class AIEnt extends HostileEntity {
             //String rrr=L.Call("hello");
             //Ai.LOGGER.info(rrr);
             //player.sendMessage(Text.literal("<%s>:%s".formatted(this.getName(),rrr)),false);
-            MinecraftClient.getInstance().setScreen(new ChatScreen("ask "));
+            MinecraftClient.getInstance().setScreen(new ChatScreen("aieask "));
 
         }
         return ActionResult.SUCCESS;

@@ -77,6 +77,6 @@ give @p dirt
 1. 回复玩家
 2. (可选)发送代码块""";
 public boolean MA=false;
-
+public int MATime=2;
 
 }

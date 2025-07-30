@@ -41,6 +41,7 @@ public class Aiclient implements ClientModInitializer {
 
 
         ConfigHolder ch = AutoConfig.register(ModConfig.class, JanksonConfigSerializer::new);
+        config = AutoConfig.getConfigHolder(ModConfig.class).getConfig();
         ch.registerLoadListener((manager,data)->{
             Updata((ModConfig) data);
             return ActionResult.SUCCESS;
@@ -49,6 +50,7 @@ public class Aiclient implements ClientModInitializer {
             Updata((ModConfig) data);
             return ActionResult.SUCCESS;
         });
+        ch.load();
         EntityRendererRegistry.register(
                 entities.aie,(ctx -> new AIERenderer(ctx))
         );
@@ -59,40 +61,31 @@ public class Aiclient implements ClientModInitializer {
                 GLFW.GLFW_KEY_R,     // 默认按键（如 R 键）
                 "category.modid.test" // 分类翻译键
         ));
+
+        ServerMessageEvents.CHAT_MESSAGE.register(((message, sender, params) -> {
+            if(message.getContent().getString().startsWith("ask")){
+                if(message.getContent().getString().contains("CLEARCTX")){
+                    Client.ClearContext();
+                }
+                inp+=message.getContent().getString().replace("...","");
+                if(message.getContent().getString().endsWith("...")){
+
+                    Ai.LOGGER.info("继续");
+                }else{
+
+                    exe(sender,Client,inp);
+                    inp="";
+                }
+            }
+        }));
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.player != null && exampleKey.wasPressed()) {
-                if(config==null)
-                {
-                    config=AutoConfig.getConfigHolder(ModConfig.class).getConfig();
-                    //Ai.LOGGER.info(config.URL);
-                    Client = new LLMAPI(config.URL,config.KEY,config.MODEL);
 
-
-                    ServerMessageEvents.CHAT_MESSAGE.register(((message, sender, params) -> {
-                        if(message.getContent().getString().startsWith("ask")){
-                            if(message.getContent().getString().contains("CLEARCTX")){
-                                Client.ClearContext();
-                            }
-                            inp+=message.getContent().getString().replace("...","");
-                            if(message.getContent().getString().endsWith("...")){
-
-                                Ai.LOGGER.info("继续");
-                            }else{
-
-                                exe(sender,Client,inp);
-                                inp="";
-                            }
-                        }
-                    }));
-                    Screen s = AutoConfig.getConfigScreen(ModConfig.class, MinecraftClient.getInstance().currentScreen).get();
-                    MinecraftClient.getInstance().setScreen(s);
-                }
-                else {
                     //Ai.LOGGER.info(config.URL);
                     //Client = new LLMAPI(config.URL,config.KEY,config.MODEL);
                     Screen s = AutoConfig.getConfigScreen(ModConfig.class, MinecraftClient.getInstance().currentScreen).get();
                     MinecraftClient.getInstance().setScreen(s);
-                }
+
 
             }
         });

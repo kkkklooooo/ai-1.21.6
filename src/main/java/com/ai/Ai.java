@@ -37,7 +37,6 @@ public class Ai implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	public static ModConfig config;
-	public static String inp="";
 	public static CompletableFuture<Void> exe(ServerPlayerEntity sender, LLMAPI Client, String message){
 		return CompletableFuture.supplyAsync(() -> Client.Call(sender.getPos().toString(),message.replace("ask ","").replace("CLEARCTX","")))
 				.thenCompose((response) -> {
@@ -93,44 +92,12 @@ public class Ai implements ModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 
-		config=AutoConfig.getConfigHolder(ModConfig.class).getConfig();
 		LOGGER.info("Hello Fabric world!");
 		FabricDefaultAttributeRegistry.register(
 				entities.aie,AIEnt.createAttributes()
 		);
 
-		//LLMAPI Client = new LLMAPI("https://openrouter.ai/api/v1/chat/completions","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","deepseek/deepseek-r1-0528:free");
-		LLMAPI Client = new LLMAPI(config.URL,config.KEY,config.MODEL);
 
-
-
-
-
-
-		ServerMessageEvents.CHAT_MESSAGE.register(((message, sender, params) -> {
-			if(message.getContent().getString().startsWith("ask")){
-				if(message.getContent().getString().contains("CLEARCTX")){
-					Client.ClearContext();
-				}
-				inp+=message.getContent().getString().replace("...","");
-				if(message.getContent().getString().endsWith("...")){
-
-					Ai.LOGGER.info("继续");
-				}else{
-
-					exe(sender,Client,inp);
-					inp="";
-				}
-
-
-
-
-
-            }else if(message.getContent().getString().startsWith("CONFIG")){
-				Screen s = AutoConfig.getConfigScreen(ModConfig.class, MinecraftClient.getInstance().currentScreen).get();
-				MinecraftClient.getInstance().setScreen(s);
-			}
-		}));
 	}
 
 

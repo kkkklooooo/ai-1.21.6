@@ -1,8 +1,8 @@
 {
   "text.autoconfig.modid.option.URL": "API URL",
-  "text.autoconfig.modid.option.URL.@tooltip": "例如:https://****/v1/chat/completions",
+  "text.autoconfig.modid.option.URL.@Tooltip": "例如:https://****/v1/chat/completions",
   "text.autoconfig.modis.option.KEY": "API Key",
-  "text.autoconfig.modis.option.KEY.@tooltip": "例如:sk-xxxxxxxx",
+  "text.autoconfig.modis.option.KEY.@Tooltip": "例如:sk-xxxxxxxx",
   "text.autoconfig.modis.option.MODEL": "模型名 例如:Deepseek",
   "text.autoconfig.modid.option.Prompt": "系统提示词"
 }

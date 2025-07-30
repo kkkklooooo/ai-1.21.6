@@ -39,8 +39,8 @@ public class Ai implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	public static ModConfig config;
-	public static CompletableFuture<Void> exe(ServerPlayerEntity sender, LLMAPI Client, String message){
-		return CompletableFuture.supplyAsync(() -> Client.Call(sender.getPos().toString(),message.replace("ask ","").replace("CLEARCTX","")))
+	public static CompletableFuture<Void> exe(ServerPlayerEntity sender, LLMAPI Client, String message,String output){
+		return CompletableFuture.supplyAsync(() -> Client.Call(sender.getPos().toString(),message.replace("ask ","").replace("CLEARCTX",""),""))
 				.thenCompose((response) -> {
 					if(response!=null){
 
@@ -57,7 +57,7 @@ public class Ai implements ModInitializer {
 								dispatcher.execute(cmd,sender.getCommandSource());
 							}catch (CommandSyntaxException e){
 								Ai.LOGGER.error(e.getMessage());
-								//return exe(sender,Client,e.getMessage());
+								//return exe(sender,Client,"",e.getMessage());
 
 								return CompletableFuture.completedFuture(null);
 							}

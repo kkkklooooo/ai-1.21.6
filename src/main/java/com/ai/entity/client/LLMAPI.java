@@ -25,9 +25,9 @@ public class LLMAPI {
         this.messages = new JsonArray();
         AddSys(this.messages);
     }
-    public String[] Call(String Pos,String Prompt){
+    public String[] Call(String Pos,String Prompt,String output){
         try{
-            JsonObject bd = buildOpenAIRequest(Prompt,model,Pos,this.messages);
+            JsonObject bd = buildOpenAIRequest(Prompt,model,Pos,this.messages,output);
             HttpRequest req= HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .header("Authorization","Bearer %s".formatted(key))
@@ -67,7 +67,7 @@ public class LLMAPI {
         }
     }
 
-    private static JsonObject buildOpenAIRequest(String query,String md,String Pos,JsonArray messages) {
+    private static JsonObject buildOpenAIRequest(String query,String md,String Pos,JsonArray messages,String output) {
         JsonObject request = new JsonObject();
 
         // 设置模型参数
@@ -92,7 +92,12 @@ public class LLMAPI {
         }*/
 
         // 3. 当前查询
-        PutMessages("user", "[当前位置:%s] Player:%s".formatted(Pos,query), messages);
+        if(query==""&&output!=""){
+            PutMessages("user", "MinecraftConsole:%s".formatted(output), messages);
+        } else if (output=="") {
+            PutMessages("user", "[当前位置:%s] Player:%s".formatted(Pos,query), messages);
+        }
+
 
         request.add("messages", messages);
 

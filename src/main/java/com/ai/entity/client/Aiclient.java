@@ -73,7 +73,7 @@ public class Aiclient implements ClientModInitializer {
                     Ai.LOGGER.info("继续");
                 }else{
 
-                    exe(sender,Client,inp);
+                    exe(sender,Client,inp,"");
                     inp="";
                 }
             }

@@ -68,11 +68,6 @@ public class Aiclient implements ClientModInitializer {
                                 exe(sender,Client,inp);
                                 inp="";
                             }
-
-
-
-
-
                         }
                     }));
                     Screen s = AutoConfig.getConfigScreen(ModConfig.class, MinecraftClient.getInstance().currentScreen).get();

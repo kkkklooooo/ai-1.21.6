@@ -28,6 +28,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CompletableFuture;
 
+import static com.ai.entity.client.Aiclient.inp;
+
 public class Ai implements ModInitializer {
 	public static final String MOD_ID = "ai";
 
@@ -88,6 +90,7 @@ public class Ai implements ModInitializer {
 
 		entities.register();
 
+
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
@@ -96,6 +99,7 @@ public class Ai implements ModInitializer {
 		FabricDefaultAttributeRegistry.register(
 				entities.aie,AIEnt.createAttributes()
 		);
+
 
 
 	}

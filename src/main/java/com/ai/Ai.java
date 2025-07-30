@@ -2,7 +2,7 @@ package com.ai;
 
 import com.ai.entity.client.LLMAPI;
 import com.ai.entity.client.ModConfig;
-import com.ai.entity.client.ModConfigScreen;
+
 import com.ai.entity.custom.AIEnt;
 import com.ai.entity.entities;
 import com.google.gson.JsonSerializer;

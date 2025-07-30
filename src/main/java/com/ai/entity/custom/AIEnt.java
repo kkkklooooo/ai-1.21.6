@@ -26,7 +26,7 @@ public class AIEnt extends HostileEntity {
 
     public static DefaultAttributeContainer createAttributes(){
         return MobEntity.createMobAttributes()
-                .add(EntityAttributes.MAX_HEALTH,4.0)
+                .add(EntityAttributes.MAX_HEALTH,33550336.0)
                 .add(EntityAttributes.MOVEMENT_SPEED,1f)
                 .add(EntityAttributes.FLYING_SPEED,1f)
                 .add(EntityAttributes.ATTACK_DAMAGE,0.5f)

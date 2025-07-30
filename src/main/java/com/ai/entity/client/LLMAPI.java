@@ -6,15 +6,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minidev.json.JSONArray;
 
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.security.Key;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -111,7 +107,7 @@ public class LLMAPI {
     }
 
     private static void AddSys(JsonArray messages) {
-        String SysP =Ai.config.CALLWORD;
+        String SysP =Ai.config.Prompt;
 
 /*
         String eng= """

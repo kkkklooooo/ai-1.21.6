@@ -1,0 +1,6 @@
+{
+  "text.autoconfig.modid.option.URL": "API URL 例如:https://****/v1/chat/completions",
+  "text.autoconfig.modis.option.KEY": "API Key 例如:sk-xxxxxxxx",
+  "text.autoconfig.modis.option.MODEL": "模型名 例如:Deepseek",
+  "text.autoconfig.modid.option.Prompt": "系统提示词"
+}

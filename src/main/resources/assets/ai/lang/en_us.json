@@ -1,0 +1,6 @@
+{
+  "text.autoconfig.modid.option.URL": "API URL eg. https://****/v1/chat/completions",
+  "text.autoconfig.modis.option.KEY": "API Key eg. sk-xxxxxxxx",
+  "text.autoconfig.modis.option.MODEL": "Model name eg. Deepseek",
+  "text.autoconfig.modid.option.Prompt": "System Prompt"
+}

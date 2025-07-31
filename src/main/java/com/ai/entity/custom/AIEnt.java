@@ -3,6 +3,14 @@ package com.ai.entity.custom;
 import com.ai.Ai;
 import com.ai.entity.client.LLMAPI;
 import com.microsoft.aad.msal4j.Prompt;
+import com.openai.client.OpenAIClient;
+import com.openai.client.OpenAIClientImpl;
+import com.openai.client.okhttp.OpenAIOkHttpClient;
+import com.openai.core.http.StreamResponse;
+import com.openai.helpers.ChatCompletionAccumulator;
+import com.openai.models.chat.completions.ChatCompletion;
+import com.openai.models.chat.completions.ChatCompletionChunk;
+import com.openai.models.chat.completions.ChatCompletionCreateParams;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.component.type.NbtComponent;
@@ -54,6 +62,7 @@ public class AIEnt extends HostileEntity {
             //Ai.LOGGER.info(rrr);
             //player.sendMessage(Text.literal("<%s>:%s".formatted(this.getName(),rrr)),false);
             MinecraftClient.getInstance().setScreen(new ChatScreen("aieask "));
+
 
         }
         return ActionResult.SUCCESS;

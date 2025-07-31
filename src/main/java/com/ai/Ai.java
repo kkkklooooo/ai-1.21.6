@@ -42,9 +42,9 @@ public class Ai implements ModInitializer {
 	public static CompletableFuture<Void> exe(ServerPlayerEntity sender, LLMAPI Client, String message,String output){
 		if(config.MA)
 		{
-			return CompletableFuture.supplyAsync(() -> Client.Call(sender.getPos().toString(),message.replace("ask ","").replace("CLEARCTX",""),output))
+			return CompletableFuture.supplyAsync(() -> Client.Call(sender.getPos().toString(),message.replace("aieask ","").replace("CLEARCTX",""),output,sender))
 					.thenCompose((response) -> {
-						if(response!=null){
+						if(response[1]!=null){
 
 							Ai.LOGGER.info(response[1]);
 							sender.sendMessage(Text.literal("[AIE]: " + response[0]),false);
@@ -73,6 +73,7 @@ public class Ai implements ModInitializer {
 							// 解析并执行命令
 
 						}else {
+							sender.sendMessage(Text.literal("[AIE]: " + response[0]),false);
 							return CompletableFuture.completedFuture(null);
 						}
 
@@ -80,7 +81,7 @@ public class Ai implements ModInitializer {
 
 					});
 		}
-		return CompletableFuture.supplyAsync(() -> Client.Call(sender.getPos().toString(),message.replace("ask ","").replace("CLEARCTX",""),""))
+		return CompletableFuture.supplyAsync(() -> Client.Call(sender.getPos().toString(),message.replace("aieask ","").replace("CLEARCTX",""),"",sender))
 				.thenCompose((response) -> {
 					if(response!=null){
 

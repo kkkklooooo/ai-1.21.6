@@ -35,6 +35,7 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	modImplementation "me.shedaniel.cloth:cloth-config-fabric:19.0.146"
+	implementation("com.openai:openai-java:2.20.0")
 	
 }
 

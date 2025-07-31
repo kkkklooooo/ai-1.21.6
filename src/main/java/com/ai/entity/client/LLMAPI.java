@@ -3,31 +3,78 @@ package com.ai.entity.client;
 import com.ai.Ai;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+
 import com.google.gson.JsonParser;
+import com.openai.client.OpenAIClient;
+import com.openai.client.okhttp.OpenAIOkHttpClient;
+import com.openai.core.JsonValue;
+import com.openai.core.http.StreamResponse;
+import com.openai.helpers.ChatCompletionAccumulator;
+import com.openai.models.chat.completions.*;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.entity.Entity;
+import net.minecraft.network.packet.s2c.play.OverlayMessageS2CPacket;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
+import net.minidev.json.JSONArray;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Environment(EnvType.CLIENT)
 public class LLMAPI {
-    String url,key,model;
-    JsonArray messages;
+    String url,key,model,res;
+    //JsonArray messages;
+
+    List<ChatCompletionMessageParam> messages;
+    com.openai.core.JsonArray messages1;
+    OpenAIClient client;
+    ChatCompletionAccumulator CCA;
+    ChatCompletionCreateParams CCCP;
     public LLMAPI(String URL, String Key,String Model){
         this.url=URL;
         this.key=Key;
         this.model=Model;
-        this.messages = new JsonArray();
+        this.messages = new ArrayList<>();
+        //ms.add(ChatCompletionMessageParam.ofAssistant())
         AddSys(this.messages);
+        this.client = OpenAIOkHttpClient.builder()
+                .apiKey(this.key)
+                .baseUrl(this.url)
+                .build();
+        this.CCA=ChatCompletionAccumulator.create();
+
+
+
+
+
     }
-    public String[] Call(String Pos,String Prompt,String output){
+
+    public String[] Call(String Pos, String Prompt, String output, ServerPlayerEntity sender){
         Ai.LOGGER.warn("Call AI with Prompt %s %s".formatted(Prompt,output));
-        try{
+        AddSys(this.messages);
+        if(Prompt==""&&output!=""){
+            PutMessages("user", "MinecraftConsole:%s".formatted(output), messages);
+        } else if (output=="") {
+            PutMessages("user", "[当前位置:%s] Player:%s".formatted(Pos,Prompt), messages);
+        }
+
+
+        CCCP = ChatCompletionCreateParams.builder()
+                //.putAdditionalBodyProperty("messages",JsonValue.from(this.messages) )
+                //.addSystemMessage("assistant")
+                .messages(this.messages)
+                //.addUserMessage("hello")
+                .model(this.model)
+                .build();
+        /*try{
             JsonObject bd = buildOpenAIRequest(Prompt,model,Pos,this.messages,output);
             HttpRequest req= HttpRequest.newBuilder()
                     .uri(URI.create(url))
@@ -40,13 +87,38 @@ public class LLMAPI {
             return parseResponse(response.body(),this.messages);
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }*/
+        res="";
+        Ai.LOGGER.info("Start");
+        try(StreamResponse<ChatCompletionChunk> sR=client.chat().completions().createStreaming(this.CCCP)){
+            sR.stream()
+                    //.peek(CCA::accumulate)
+                    //.flatMap(c->c.choices().stream())
+                    //.flatMap(c->c.delta().content().stream())
+                    .forEach(ct->{
+                        res+=String.valueOf(ct.choices().getFirst().delta().content().get());
+
+                        //res+=ct;
+                        sender.getServer().execute(
+                                ()->{
+                                    Ai.LOGGER.info(res);
+                                    Text actionBarText = Text.literal(res);
+                                    OverlayMessageS2CPacket pk= new OverlayMessageS2CPacket(actionBarText);
+                                    sender.networkHandler.sendPacket(pk);
+                                }
+                        );
+                    });
         }
+        return parseResponse(res,messages);
+
+
     }
-    private static String[] parseResponse(String res,JsonArray messages){
+    private static String[] parseResponse(String res,List<ChatCompletionMessageParam> messages){
 
 
-        JsonObject r = JsonParser.parseString(res).getAsJsonObject();
-        String content = r.getAsJsonArray("choices").get(0).getAsJsonObject().getAsJsonObject("message").get("content").getAsString();
+        //JsonObject r = JsonParser.parseString(res).getAsJsonObject();
+        //String content = r.getAsJsonArray("choices").get(0).getAsJsonObject().getAsJsonObject("message").get("content").getAsString();
+        String content = res;
         PutMessages("assistant",content,messages);
         return PostProcess(content);
     }
@@ -64,11 +136,11 @@ public class LLMAPI {
             String res = matcher.replaceAll("");
             return new String[] {res,command};
         }else{
-            return null;
+            return new String[]{s,null};
         }
     }
 
-    private static JsonObject buildOpenAIRequest(String query,String md,String Pos,JsonArray messages,String output) {
+    private static JsonObject buildOpenAIRequest(String query,String md,String Pos,List<ChatCompletionMessageParam> messages,String output) {
         JsonObject request = new JsonObject();
 
         // 设置模型参数
@@ -100,7 +172,7 @@ public class LLMAPI {
         }
 
 
-        request.add("messages", messages);
+        //request.add("messages", messages);
 
         // 添加函数定义
         /*
@@ -112,7 +184,7 @@ public class LLMAPI {
         return request;
     }
 
-    private static void AddSys(JsonArray messages) {
+    private static void AddSys(List<ChatCompletionMessageParam> messages) {
         String SysP =Ai.config.CALLWORD1;
 
 /*
@@ -152,15 +224,24 @@ public class LLMAPI {
         PutMessages("system", SysP, messages);
     }
 
-    private static void PutMessages(String system, String SysP, JsonArray messages) {
+    private static void PutMessages(String system, String SysP, List<ChatCompletionMessageParam> messages) {
+        /*
         JsonObject systemMessage = new JsonObject();
         systemMessage.addProperty("role", system);
         systemMessage.addProperty("content", SysP);
-        messages.add(systemMessage);
+        messages.add(systemMessage);*/
+        if(system=="system"){
+            messages.add(ChatCompletionMessageParam.ofSystem(ChatCompletionSystemMessageParam.builder().content(SysP).build()));
+        } else if (system=="user") {
+            messages.add(ChatCompletionMessageParam.ofUser(ChatCompletionUserMessageParam.builder().content(SysP).build()));
+        } else if (system=="assistant") {
+            messages.add(ChatCompletionMessageParam.ofAssistant(ChatCompletionAssistantMessageParam.builder().content(SysP).build()));
+        }
     }
     public void ClearContext(){
         Ai.LOGGER.info("CLEAR");
-        this.messages = new JsonArray();
+        this.messages.clear();
+
         AddSys(this.messages);
     }
 }

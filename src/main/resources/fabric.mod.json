@@ -3,7 +3,7 @@
 	"id": "ai",
 	"version": "${version}",
 	"name": "AIE",
-	"description": "Fuck AI God",
+	"description": "An Artificial Intelligence that can respond with settings and set command",
 	"authors": [
 		"BP Project"
 	],

@@ -125,8 +125,8 @@ public class LLMAPI {
 
 
     private static String[] PostProcess(String s){
-        
-        Pattern pattern =Pattern.compile("```command\\r?\\n([\\s\\S]+?)\\r?\\n```");
+
+        Pattern pattern =Pattern.compile("```command\\r?\\n([\\s\\S]+?)\\r?\\r/\0?\\r?\\r?\\n```");
         Matcher matcher = pattern.matcher(s);
         if(matcher.find()){
             String command = matcher.group(1);
@@ -185,7 +185,7 @@ public class LLMAPI {
     }
 
     private static void AddSys(List<ChatCompletionMessageParam> messages) {
-        String SysP =Ai.config.CALLWORD1;
+        String SysP =Ai.config.CALLWORD;
 
 /*
         String eng= """

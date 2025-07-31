@@ -98,7 +98,7 @@ public class LLMAPI {
                 //.addSystemMessage("assistant")
                 .messages(this.messages)
 
-                .maxCompletionTokens(8192)
+                .putAdditionalBodyProperty("max_tokens",JsonValue.from(8192))
                 //.addUserMessage("hello")
                 .model(this.model)
                 .build();
@@ -130,6 +130,7 @@ public class LLMAPI {
                             reasoning+=ct.choices().getFirst().delta()._additionalProperties().get("reasoning_content")==null?"":ct.choices().getFirst().delta()._additionalProperties().get("reasoning_content");
                             //res+=ct;
                             Ai.LOGGER.info(reasoning);
+                            Ai.LOGGER.info(String.valueOf(reasoning.length()));
                             if(God!=null){
                                 God.setCustomNameVisible(true);
                                 God.setCustomName(Text.of(reasoning.substring(Math.max(reasoning.length() - 11, 0),reasoning.length()-1)));

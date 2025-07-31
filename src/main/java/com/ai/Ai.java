@@ -122,7 +122,8 @@ public class Ai implements ModInitializer {
 								players.add(sender);
 								delays.add(Integer.parseInt(flags[1]));
 								maxdelays.add(Integer.parseInt(flags[1]));
-								times.add(Integer.parseInt(flags[2])-1);
+								times.add(Integer.parseInt(flags[2]));
+								return CompletableFuture.completedFuture(null);
 							}
 							try{
 								dispatcher.execute(command[0],sender.getCommandSource());

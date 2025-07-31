@@ -1,6 +1,7 @@
 package com.ai.entity.client;
 
 import com.ai.Ai;
+import com.ai.entity.custom.AIEnt;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -16,7 +17,9 @@ import net.fabricmc.api.Environment;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.packet.s2c.play.OverlayMessageS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.Box;
 import net.minidev.json.JSONArray;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +35,7 @@ import java.util.regex.Pattern;
 public class LLMAPI {
     String url,key,model,res,reasoning;
     //JsonArray messages;
-
+    AIEnt God=null;
     List<ChatCompletionMessageParam> messages;
     com.openai.core.JsonArray messages1;
     OpenAIClient client;
@@ -57,7 +60,28 @@ public class LLMAPI {
 
     }
 
+
+
+    public static <T extends Entity> T getNearestEntity(ServerPlayerEntity player, Class<T> entityClass, double range) {
+        ServerWorld world = player.getWorld();
+
+        // 定义一个以玩家为中心的搜索范围
+        Box box = Box.of(player.getPos(), range, range, range);
+
+        // 获取范围内指定类型的实体列表
+        List<T> entities = world.getEntitiesByClass(entityClass, box, e -> !e.equals(player));
+
+        // 根据距离排序，返回最近的一个
+        return entities.stream()
+                .min(Comparator.comparingDouble(e -> e.squaredDistanceTo(player)))
+                .orElse(null);
+    }
+
+
+
     public String[] Call(String Pos, String Prompt, String output, ServerPlayerEntity sender){
+        God =getNearestEntity(sender, AIEnt.class,20);
+
         Ai.LOGGER.warn("Call AI with Prompt %s %s".formatted(Prompt,output));
         AddSys(this.messages);
         Ai.LOGGER.warn("Added SYS");
@@ -73,6 +97,8 @@ public class LLMAPI {
                 //.putAdditionalBodyProperty("messages",JsonValue.from(this.messages) )
                 //.addSystemMessage("assistant")
                 .messages(this.messages)
+
+                .maxCompletionTokens(8192)
                 //.addUserMessage("hello")
                 .model(this.model)
                 .build();
@@ -103,6 +129,12 @@ public class LLMAPI {
                         if(ct.choices().getFirst().delta().content().get()==""){
                             reasoning+=ct.choices().getFirst().delta()._additionalProperties().get("reasoning_content")==null?"":ct.choices().getFirst().delta()._additionalProperties().get("reasoning_content");
                             //res+=ct;
+                            Ai.LOGGER.info(reasoning);
+                            if(God!=null){
+                                God.setCustomNameVisible(true);
+                                God.setCustomName(Text.of(reasoning.substring(Math.max(reasoning.length() - 11, 0),reasoning.length()-1)));
+                            }
+                            /*
                             sender.getServer().execute(
                                     ()->{
                                         Ai.LOGGER.info(reasoning);
@@ -110,7 +142,7 @@ public class LLMAPI {
                                         OverlayMessageS2CPacket pk= new OverlayMessageS2CPacket(actionBarText);
                                         sender.networkHandler.sendPacket(pk);
                                     }
-                            );
+                            );*/
                         }else{
                             res+=String.valueOf(ct.choices().getFirst().delta().content().get());
                             //res+=ct;
@@ -128,6 +160,10 @@ public class LLMAPI {
 
 
                     });
+        }
+        if(God!=null){
+            God.setCustomNameVisible(false);
+            God.setCustomName(Text.of("AIE"));
         }
         return parseResponse(res,messages);
 

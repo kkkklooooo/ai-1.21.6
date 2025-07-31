@@ -14,8 +14,10 @@ import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
+import net.minecraft.block.entity.VaultBlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.network.message.SignedMessage;
@@ -23,9 +25,12 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.world.tick.Tick;
+import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 import static com.ai.entity.client.Aiclient.inp;
@@ -39,6 +44,8 @@ public class Ai implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	public static int num=0;
 	public static ModConfig config;
+	public int ServerTick;
+	private static Map<String[],ServerPlayerEntity> tasks;
 	public static CompletableFuture<Void> exe(ServerPlayerEntity sender, LLMAPI Client, String message,String output){
 		if(config.MA)
 		{
@@ -55,8 +62,14 @@ public class Ai implements ModInitializer {
 
 							String[] cmds = response[1].split("\\R");
 							for (String cmd : cmds) {
+								String[] command=cmd.split("/");
+								String[] flags=command[1].split(" ");
+								if(Boolean.parseBoolean(flags[0]))
+								{
+									tasks.put(command,sender);
+								}
 								try{
-									dispatcher.execute(cmd,sender.getCommandSource());
+									dispatcher.execute(command[0],sender.getCommandSource());
 								}catch (CommandSyntaxException e){
 									if(num>=config.MATime){
 										num=0;
@@ -93,8 +106,15 @@ public class Ai implements ModInitializer {
 
 						String[] cmds = response[1].split("\\R");
 						for (String cmd : cmds) {
+							String[] command=cmd.split("/");
+							String[] flags=command[1].split(" ");
+							if(Boolean.parseBoolean(flags[0]))
+							{
+								tasks.put(command,sender);
+								return CompletableFuture.completedFuture(null);
+							}
 							try{
-								dispatcher.execute(cmd,sender.getCommandSource());
+								dispatcher.execute(command[0],sender.getCommandSource());
 							}catch (CommandSyntaxException e){
 								Ai.LOGGER.error(e.getMessage());
 								//return exe(sender,Client,e.getMessage());
@@ -132,9 +152,20 @@ public class Ai implements ModInitializer {
 		);
 
 
+		ServerTickEvents.START_SERVER_TICK.register(this::OnServerTick);
 
 	}
 
+
+
+	public void OnServerTick(MinecraftServer server)
+	{
+		Set<String[]> set =tasks.keySet();
+		for(String[] key:set)
+		{
+			key[1].split(" ")[1]
+		}
+	}
 
 	@FunctionalInterface
 	public interface LineProcessorCallback {

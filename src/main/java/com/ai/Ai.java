@@ -44,11 +44,11 @@ public class Ai implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	public static int num=0;
 	public static ModConfig config;
-	private static List<String> tasks;
-	private static List<ServerPlayerEntity> players;
-	private static List<Integer> delays;
-	private static List<Integer> maxdelays;
-	private static List<Integer> times;
+	private static List<String> tasks=new ArrayList<String>();
+	private static List<ServerPlayerEntity> players= new ArrayList<ServerPlayerEntity>();
+	private static List<Integer> delays=new ArrayList<Integer>();
+	private static List<Integer> maxdelays=new ArrayList<Integer>();
+	private static List<Integer> times=new ArrayList<Integer>();
 	public static CompletableFuture<Void> exe(ServerPlayerEntity sender, LLMAPI Client, String message,String output){
 		if(config.MA)
 		{

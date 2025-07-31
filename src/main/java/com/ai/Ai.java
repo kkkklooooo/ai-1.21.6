@@ -69,7 +69,7 @@ public class Ai implements ModInitializer {
 								String[] flags=command[1].split(" ");
 								if(Boolean.parseBoolean(flags[0]))
 								{
-									tasks.add(command[0]);
+									tasks.add(command[0].trim());
 									players.add(sender);
 									delays.add(Integer.parseInt(flags[1]));
 									maxdelays.add(Integer.parseInt(flags[1]));
@@ -118,7 +118,7 @@ public class Ai implements ModInitializer {
 							String[] flags=command[1].split(" ");
 							if(Boolean.parseBoolean(flags[0]))
 							{
-								tasks.add(command[0]);
+								tasks.add(command[0].trim());
 								players.add(sender);
 								delays.add(Integer.parseInt(flags[1]));
 								maxdelays.add(Integer.parseInt(flags[1]));
@@ -161,10 +161,45 @@ public class Ai implements ModInitializer {
 		FabricDefaultAttributeRegistry.register(
 				entities.aie,AIEnt.createAttributes()
 		);
+		ServerTickEvents.START_SERVER_TICK.register(this::OnServerTick);
 
 
 
 	}
+	public void OnServerTick(MinecraftServer server)
+	{
+		for(int i=0;i<tasks.size();i++)
+		{
+			int a =delays.get(i);
+			if(a<=1)
+			{
+				CommandDispatcher<ServerCommandSource> dispatcher =
+						players.get(i).getServer().getCommandManager().getDispatcher();
+				try{
+					dispatcher.execute(tasks.get(i),players.get(i).getCommandSource());
+				}catch (CommandSyntaxException e){
+					Ai.LOGGER.error(e.getMessage());
+				}
+
+
+				int b = times.get(i);
+				if(b<=1)
+				{
+					tasks.remove(i);
+					players.remove(i);
+					delays.remove(i);
+					maxdelays.remove(i);
+					times.remove(i);
+					return;
+				}
+				times.set(i,b-1);
+				delays.set(i,maxdelays.get(i));
+				return;
+			}
+			delays.set(i,a-1);
+		}
+	}
+
 
 
 	@FunctionalInterface

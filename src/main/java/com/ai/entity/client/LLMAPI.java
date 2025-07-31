@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 
 @Environment(EnvType.CLIENT)
 public class LLMAPI {
-    String url,key,model,res;
+    String url,key,model,res,reasoning;
     //JsonArray messages;
 
     List<ChatCompletionMessageParam> messages;
@@ -89,6 +89,7 @@ public class LLMAPI {
             throw new RuntimeException(e);
         }*/
         res="";
+        reasoning="";
         Ai.LOGGER.info("Start");
         try(StreamResponse<ChatCompletionChunk> sR=client.chat().completions().createStreaming(this.CCCP)){
             sR.stream()
@@ -96,17 +97,33 @@ public class LLMAPI {
                     //.flatMap(c->c.choices().stream())
                     //.flatMap(c->c.delta().content().stream())
                     .forEach(ct->{
-                        res+=String.valueOf(ct.choices().getFirst().delta().content().get());
+                        if(ct.choices().getFirst().delta().content().get()==""){
+                            reasoning+=ct.choices().getFirst().delta()._additionalProperties().get("reasoning_content")==null?"":ct.choices().getFirst().delta()._additionalProperties().get("reasoning_content");
+                            //res+=ct;
+                            sender.getServer().execute(
+                                    ()->{
+                                        Ai.LOGGER.info(reasoning);
+                                        Text actionBarText = Text.literal(reasoning);
+                                        OverlayMessageS2CPacket pk= new OverlayMessageS2CPacket(actionBarText);
+                                        sender.networkHandler.sendPacket(pk);
+                                    }
+                            );
+                        }else{
+                            res+=String.valueOf(ct.choices().getFirst().delta().content().get());
+                            //res+=ct;
+                            sender.getServer().execute(
+                                    ()->{
+                                        Ai.LOGGER.info(res);
+                                        Text actionBarText = Text.literal(res);
+                                        OverlayMessageS2CPacket pk= new OverlayMessageS2CPacket(actionBarText);
+                                        sender.networkHandler.sendPacket(pk);
+                                    }
+                            );
+                        }
 
-                        //res+=ct;
-                        sender.getServer().execute(
-                                ()->{
-                                    Ai.LOGGER.info(res);
-                                    Text actionBarText = Text.literal(res);
-                                    OverlayMessageS2CPacket pk= new OverlayMessageS2CPacket(actionBarText);
-                                    sender.networkHandler.sendPacket(pk);
-                                }
-                        );
+
+
+
                     });
         }
         return parseResponse(res,messages);
@@ -185,7 +202,7 @@ public class LLMAPI {
     }
 
     private static void AddSys(List<ChatCompletionMessageParam> messages) {
-        String SysP =Ai.config.CALLWORD;
+        String SysP =Ai.config.CALLWORD1;
 
 /*
         String eng= """

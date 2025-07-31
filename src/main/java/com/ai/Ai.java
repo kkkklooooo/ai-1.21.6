@@ -172,7 +172,7 @@ public class Ai implements ModInitializer {
 		for(int i=0;i<tasks.size();i++)
 		{
 			int a =delays.get(i);
-			if(a<=1)
+			if(a==1||a==0)
 			{
 				CommandDispatcher<ServerCommandSource> dispatcher =
 						players.get(i).getServer().getCommandManager().getDispatcher();
@@ -184,7 +184,7 @@ public class Ai implements ModInitializer {
 
 
 				int b = times.get(i);
-				if(b<=1)
+				if(b==1||b==0)
 				{
 					tasks.remove(i);
 					players.remove(i);

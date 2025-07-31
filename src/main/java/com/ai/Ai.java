@@ -44,8 +44,11 @@ public class Ai implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	public static int num=0;
 	public static ModConfig config;
-	public int ServerTick;
-	private static Map<String[],ServerPlayerEntity> tasks;
+	private static List<String> tasks;
+	private static List<ServerPlayerEntity> players;
+	private static List<Integer> delays;
+	private static List<Integer> maxdelays;
+	private static List<Integer> times;
 	public static CompletableFuture<Void> exe(ServerPlayerEntity sender, LLMAPI Client, String message,String output){
 		if(config.MA)
 		{
@@ -66,7 +69,11 @@ public class Ai implements ModInitializer {
 								String[] flags=command[1].split(" ");
 								if(Boolean.parseBoolean(flags[0]))
 								{
-									tasks.put(command,sender);
+									tasks.add(command[0]);
+									players.add(sender);
+									delays.add(Integer.parseInt(flags[1]));
+									maxdelays.add(Integer.parseInt(flags[1]));
+									times.add(Integer.parseInt(flags[2])-1);
 								}
 								try{
 									dispatcher.execute(command[0],sender.getCommandSource());
@@ -110,8 +117,11 @@ public class Ai implements ModInitializer {
 							String[] flags=command[1].split(" ");
 							if(Boolean.parseBoolean(flags[0]))
 							{
-								tasks.put(command,sender);
-								return CompletableFuture.completedFuture(null);
+								tasks.add(command[0]);
+								players.add(sender);
+								delays.add(Integer.parseInt(flags[1]));
+								maxdelays.add(Integer.parseInt(flags[1]));
+								times.add(Integer.parseInt(flags[2])-1);
 							}
 							try{
 								dispatcher.execute(command[0],sender.getCommandSource());
@@ -160,10 +170,35 @@ public class Ai implements ModInitializer {
 
 	public void OnServerTick(MinecraftServer server)
 	{
-		Set<String[]> set =tasks.keySet();
-		for(String[] key:set)
+		for(int i=0;i<tasks.size();i++)
 		{
-			key[1].split(" ")[1]
+            int a =delays.get(i);
+			if(a<=1)
+			{
+				CommandDispatcher<ServerCommandSource> dispatcher =
+						players.get(i).getServer().getCommandManager().getDispatcher();
+				try{
+					dispatcher.execute(tasks.get(i),players.get(i).getCommandSource());
+				}catch (CommandSyntaxException e){
+					Ai.LOGGER.error(e.getMessage());
+				}
+
+
+				int b = times.get(i);
+				if(b<=1)
+				{
+					tasks.remove(i);
+					players.remove(i);
+					delays.remove(i);
+					maxdelays.remove(i);
+					times.remove(i);
+					return;
+				}
+				times.set(i,b-1);
+				delays.set(i,maxdelays.get(i));
+				return;
+			}
+			delays.set(i,a-1);
 		}
 	}
 

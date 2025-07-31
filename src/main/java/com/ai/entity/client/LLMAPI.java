@@ -60,11 +60,13 @@ public class LLMAPI {
     public String[] Call(String Pos, String Prompt, String output, ServerPlayerEntity sender){
         Ai.LOGGER.warn("Call AI with Prompt %s %s".formatted(Prompt,output));
         AddSys(this.messages);
+        Ai.LOGGER.warn("Added SYS");
         if(Prompt==""&&output!=""){
             PutMessages("user", "MinecraftConsole:%s".formatted(output), messages);
         } else if (output=="") {
             PutMessages("user", "[当前位置:%s] Player:%s".formatted(Pos,Prompt), messages);
         }
+        Ai.LOGGER.warn("Putted Prompt");
 
 
         CCCP = ChatCompletionCreateParams.builder()
@@ -74,6 +76,7 @@ public class LLMAPI {
                 //.addUserMessage("hello")
                 .model(this.model)
                 .build();
+        Ai.LOGGER.warn("Config");
         /*try{
             JsonObject bd = buildOpenAIRequest(Prompt,model,Pos,this.messages,output);
             HttpRequest req= HttpRequest.newBuilder()

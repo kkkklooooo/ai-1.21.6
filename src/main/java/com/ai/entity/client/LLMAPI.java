@@ -146,7 +146,7 @@ public class LLMAPI {
 
     private static String[] PostProcess(String s){
 
-        Pattern pattern =Pattern.compile("```command\\r?\\n([\\s\\S]+?)\\r?\\r/\0?\\r?\\r?\\n```");
+        Pattern pattern =Pattern.compile("```command\\r?\\n([\\s\\S]+?)\\r?\\r?\\r?\\n```");
         Matcher matcher = pattern.matcher(s);
         if(matcher.find()){
             String command = matcher.group(1);

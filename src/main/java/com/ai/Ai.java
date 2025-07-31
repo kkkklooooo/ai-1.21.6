@@ -52,7 +52,7 @@ public class Ai implements ModInitializer {
 	public static CompletableFuture<Void> exe(ServerPlayerEntity sender, LLMAPI Client, String message,String output){
 		if(config.MA)
 		{
-			return CompletableFuture.supplyAsync(() -> Client.Call(sender.getPos().toString(),message.replace("ask ","").replace("CLEARCTX",""),output))
+			return CompletableFuture.supplyAsync(() -> Client.Call(sender.getPos().toString(),message.replace("aieask ","").replace("CLEARCTX",""),output))
 					.thenCompose((response) -> {
 						if(response!=null){
 
@@ -100,7 +100,7 @@ public class Ai implements ModInitializer {
 
 					});
 		}
-		return CompletableFuture.supplyAsync(() -> Client.Call(sender.getPos().toString(),message.replace("ask ","").replace("CLEARCTX",""),""))
+		return CompletableFuture.supplyAsync(() -> Client.Call(sender.getPos().toString(),message.replace("aieask ","").replace("CLEARCTX",""),""))
 				.thenCompose((response) -> {
 					if(response!=null){
 

@@ -1,5 +1,6 @@
 package com.ai;
 
+import com.ai.entity.client.Aiclient;
 import com.ai.entity.client.LLMAPI;
 import com.ai.entity.client.ModConfig;
 
@@ -51,7 +52,7 @@ public class Ai implements ModInitializer {
 	private static List<Integer> times=new ArrayList<Integer>();
 	private static Stack<Integer> destroy = new Stack<>();
 	private static List<Integer> initdelay = new ArrayList<>();
-	public static CompletableFuture<Void> exe(ServerPlayerEntity sender, LLMAPI Client, String message,String output){
+	public static CompletableFuture<Void> exe(ServerPlayerEntity sender, LLMAPI Client, String message, String output){
 		/*if(config.MA)
 		{*/
 			return CompletableFuture.supplyAsync(() -> Client.Call(sender.getPos().toString(),message.replace("aieask ","").replace("CLEARCTX",""),output,sender))
@@ -186,6 +187,12 @@ public class Ai implements ModInitializer {
 					dispatcher.execute(tasks.get(i),players.get(i).getCommandSource());
 				}catch (CommandSyntaxException e){
 					Ai.LOGGER.error(e.getMessage());
+					exe(players.get(i),Aiclient.Client,e.getMessage(),e.getMessage());
+					tasks.clear();
+					delays.clear();
+					maxdelays.clear();
+					times.clear();
+					players.clear();
 				}
 
 
@@ -207,6 +214,7 @@ public class Ai implements ModInitializer {
 			delays.remove(j);
 			maxdelays.remove(j);
 			times.remove(j);
+			players.remove(j);
 		}
 		destroy.clear();
 	}

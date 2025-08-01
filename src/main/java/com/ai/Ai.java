@@ -50,9 +50,10 @@ public class Ai implements ModInitializer {
 	private static List<Integer> maxdelays=new ArrayList<Integer>();
 	private static List<Integer> times=new ArrayList<Integer>();
 	private static Stack<Integer> destroy = new Stack<>();
+	private static List<Integer> initdelay = new ArrayList<>();
 	public static CompletableFuture<Void> exe(ServerPlayerEntity sender, LLMAPI Client, String message,String output){
-		if(config.MA)
-		{
+		/*if(config.MA)
+		{*/
 			return CompletableFuture.supplyAsync(() -> Client.Call(sender.getPos().toString(),message.replace("aieask ","").replace("CLEARCTX",""),output,sender))
 					.thenCompose((response) -> {
 						if(response[1]!=null){
@@ -68,15 +69,13 @@ public class Ai implements ModInitializer {
 							for (String cmd : cmds) {
 								String[] command=cmd.split("/");
 								String[] flags=command[1].split(" ");
-								if(Boolean.parseBoolean(flags[0]))
-								{
 									tasks.add(command[0].trim());
 									players.add(sender);
-									delays.add(Integer.parseInt(flags[1]));
-									maxdelays.add(Integer.parseInt(flags[1]));
-									times.add(Integer.parseInt(flags[2])-1);
-								}
-								try{
+									delays.add(0);
+									maxdelays.add(Integer.parseInt(flags[0]));
+									times.add(Integer.parseInt(flags[1]));
+									initdelay.add(Integer.parseInt(flags[2]));
+								/*try{
 									dispatcher.execute(command[0],sender.getCommandSource());
 								}catch (CommandSyntaxException e){
 									if(num>=config.MATime){
@@ -86,9 +85,9 @@ public class Ai implements ModInitializer {
 									Ai.LOGGER.error(e.getMessage());
 									num++;
 									return exe(sender,Client,e.getMessage(),e.getMessage());
-								}
+								}*/
 							}
-							num = 0;
+							//num = 0;
 							return CompletableFuture.completedFuture(null);
 
 							// 解析并执行命令
@@ -101,8 +100,8 @@ public class Ai implements ModInitializer {
 
 
 					});
-		}
-		return CompletableFuture.supplyAsync(() -> Client.Call(sender.getPos().toString(),message.replace("aieask ","").replace("CLEARCTX",""),"",sender))
+		//}
+		/*return CompletableFuture.supplyAsync(() -> Client.Call(sender.getPos().toString(),message.replace("aieask ","").replace("CLEARCTX",""),"",sender))
 				.thenCompose((response) -> {
 					if(response!=null){
 
@@ -145,7 +144,7 @@ public class Ai implements ModInitializer {
 
 
 
-				});
+				});*/
 
 	}
 
@@ -172,6 +171,12 @@ public class Ai implements ModInitializer {
 	{
 		for(int i=0;i<tasks.size();i++)
 		{
+			if(initdelay.get(i)>0)
+			{
+				int a = initdelay.get(i);
+				initdelay.set(i,a-1);
+				continue;
+			}
 			int a =delays.get(i);
 			if(a==1||a==0)
 			{

@@ -243,7 +243,7 @@ public class LLMAPI {
     }
 
     private static void AddSys(List<ChatCompletionMessageParam> messages) {
-        String SysP =Ai.config.CALLWORD1;
+        String SysP =Ai.config.CALLWORD;
 
 /*
         String eng= """

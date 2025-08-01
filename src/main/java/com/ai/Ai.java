@@ -191,11 +191,11 @@ public class Ai implements ModInitializer {
 					delays.remove(i);
 					maxdelays.remove(i);
 					times.remove(i);
-					return;
+					continue;
 				}
 				times.set(i,b-1);
 				delays.set(i,maxdelays.get(i));
-				return;
+				continue;
 			}
 			delays.set(i,a-1);
 		}

@@ -49,6 +49,7 @@ public class Ai implements ModInitializer {
 	private static List<Integer> delays=new ArrayList<Integer>();
 	private static List<Integer> maxdelays=new ArrayList<Integer>();
 	private static List<Integer> times=new ArrayList<Integer>();
+	private static Stack<Integer> destroy = new Stack<>();
 	public static CompletableFuture<Void> exe(ServerPlayerEntity sender, LLMAPI Client, String message,String output){
 		if(config.MA)
 		{
@@ -186,11 +187,7 @@ public class Ai implements ModInitializer {
 				int b = times.get(i);
 				if(b==1||b==0)
 				{
-					tasks.remove(i);
-					players.remove(i);
-					delays.remove(i);
-					maxdelays.remove(i);
-					times.remove(i);
+					destroy.add(i);
 					continue;
 				}
 				times.set(i,b-1);
@@ -199,6 +196,14 @@ public class Ai implements ModInitializer {
 			}
 			delays.set(i,a-1);
 		}
+		for (int j:destroy )
+		{
+			tasks.remove(j);
+			delays.remove(j);
+			maxdelays.remove(j);
+			times.remove(j);
+		}
+		destroy.clear();
 	}
 
 

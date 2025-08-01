@@ -83,7 +83,7 @@ public class LLMAPI {
         God =getNearestEntity(sender, AIEnt.class,20);
 
         Ai.LOGGER.warn("Call AI with Prompt %s %s".formatted(Prompt,output));
-        AddSys(this.messages);
+        //AddSys(this.messages);
         Ai.LOGGER.warn("Added SYS");
         if(Prompt==""&&output!=""){
             PutMessages("user", "MinecraftConsole:%s".formatted(output), messages);
@@ -166,6 +166,7 @@ public class LLMAPI {
             God.setCustomNameVisible(false);
             God.setCustomName(Text.of("AIE"));
         }
+        Ai.LOGGER.info("Finish");
         return parseResponse(res,messages);
 
 

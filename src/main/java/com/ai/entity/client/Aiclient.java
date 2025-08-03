@@ -40,7 +40,7 @@ public class Aiclient implements ClientModInitializer {
 
 
     private static KeyBinding exampleKey;
-    public LLMAPI Client;
+    public static LLMAPI Client;
 
     @Override
     public void onInitializeClient() {

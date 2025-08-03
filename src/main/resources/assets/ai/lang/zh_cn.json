@@ -7,6 +7,7 @@
   "text.autoconfig.modid.option.MODEL": "MODEL",
   "text.autoconfig.modid.option.CALLWORD": "提示词",
   "text.autoconfig.modid.option.CALLWORD1": "提示词示例",
+  "text.autoconfig.modid.option.AiModel": "提示词模型",
   "text.autoconfig.modid.option.MA": "(实验性且高消耗) 多次尝试(需要重启Minecraft)",
   "text.autoconfig.modid.option.MATime": "(实验性且高消耗) 多次尝试次数(需要重启Minecraft)",
   "entity.ai.aie": "AIE"

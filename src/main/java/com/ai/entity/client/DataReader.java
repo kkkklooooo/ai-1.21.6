@@ -1,6 +1,7 @@
 package com.ai.entity.client;
 
 import com.ai.Ai;
+import me.shedaniel.autoconfig.AutoConfig;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.BufferedReader;
@@ -11,6 +12,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
+
+import static com.ai.Ai.config;
 
 public class DataReader {
     // 读取全局数据

@@ -85,6 +85,7 @@ public class Aiclient implements ClientModInitializer {
         {
             config.CALLWORD= config.CALLWORD1;
         }
+        AutoConfig.getConfigHolder(ModConfig.class).setConfig(config);
         ch.registerLoadListener((manager,data)->{
             Updata((ModConfig) data);
             return ActionResult.SUCCESS;
@@ -141,6 +142,8 @@ public class Aiclient implements ClientModInitializer {
             if(message.getContent().getString().startsWith("aieread"))
             {
                 DataReader.readGlobalData(config.AiModel);
+                AutoConfig.getConfigHolder(ModConfig.class).setConfig(config);
+                Updata(config);
             }
             if(message.getContent().getString().startsWith("aieask")){
                 if(message.getContent().getString().contains("CLEARCTX")){

@@ -1,5 +1,6 @@
 package com.ai.entity.client;
 
+import com.ai.Ai;
 import org.spongepowered.include.com.google.common.io.Files;
 
 import java.io.*;
@@ -10,11 +11,12 @@ import java.util.Arrays;
 public class DataWriter {
     // 写入全局数据
     public static void writeGlobalData(String modelName, String model) {
-        Path filePath = FileStorage.getModStorageDir().resolve(modelName);
+        Path filePath = FileStorage.getModStorageDir().resolve(modelName+".txt");
         try {
             Files.write(model.getBytes(), filePath.toFile());
         } catch (IOException e) {
             // 处理写入错误
+            Ai.LOGGER.info(String.valueOf(e));
         }
     }
 }

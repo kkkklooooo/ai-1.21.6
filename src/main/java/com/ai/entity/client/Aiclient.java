@@ -48,12 +48,12 @@ public class Aiclient implements ClientModInitializer {
 
     private static KeyBinding exampleKey;
     public static LLMAPI Client;
+    public static ConfigHolder ch = AutoConfig.register(ModConfig.class, JanksonConfigSerializer::new);
 
     @Override
     public void onInitializeClient() {
 
 
-        ConfigHolder ch = AutoConfig.register(ModConfig.class, JanksonConfigSerializer::new);
         config = AutoConfig.getConfigHolder(ModConfig.class).getConfig();
         Path modDir = getModStorageDir();
 
@@ -138,11 +138,11 @@ public class Aiclient implements ClientModInitializer {
             }
             if(message.getContent().getString().startsWith("aiewrite"))
             {
-                DataWriter.writeGlobalData(message.getContent().getString().replace("aiewrite","").trim(), config.CALLWORD);
+                DataWriter.writeGlobalData(message.getContent().getString().replace("aiewrite","").trim(), ((ModConfig)ch.getConfig()).CALLWORD);
             }
             if(message.getContent().getString().startsWith("aieread"))
             {
-                DataReader.readGlobalData(config.AiModel);
+                DataReader.readGlobalData(message.getContent().getString().replace("aieread","").trim());
                 ch.setConfig(config);
                 ch.save();
                 Updata(config);

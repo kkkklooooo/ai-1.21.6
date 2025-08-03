@@ -1,6 +1,7 @@
 package com.ai;
 
 import com.ai.entity.client.Aiclient;
+import com.ai.entity.client.FileStorage;
 import com.ai.entity.client.LLMAPI;
 import com.ai.entity.client.ModConfig;
 
@@ -15,6 +16,8 @@ import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
@@ -23,6 +26,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.network.message.SignedMessage;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -31,10 +35,14 @@ import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 import static com.ai.entity.client.Aiclient.inp;
+import static com.ai.entity.client.FileStorage.getModStorageDir;
 
 public class Ai implements ModInitializer {
 	public static final String MOD_ID = "ai";
@@ -45,13 +53,13 @@ public class Ai implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	public static int num=0;
 	public static ModConfig config;
-	private static List<String> tasks=new ArrayList<String>();
-	private static List<ServerPlayerEntity> players= new ArrayList<ServerPlayerEntity>();
-	private static List<Integer> delays=new ArrayList<Integer>();
-	private static List<Integer> maxdelays=new ArrayList<Integer>();
-	private static List<Integer> times=new ArrayList<Integer>();
-	private static Stack<Integer> destroy = new Stack<>();
-	private static List<Integer> initdelay = new ArrayList<>();
+	public static List<String> tasks=new ArrayList<String>();
+	public static List<ServerPlayerEntity> players= new ArrayList<ServerPlayerEntity>();
+	public static List<Integer> delays=new ArrayList<Integer>();
+	public static List<Integer> maxdelays=new ArrayList<Integer>();
+	public static List<Integer> times=new ArrayList<Integer>();
+	public static List<Integer> destroy = new ArrayList<>();
+	public static List<Integer> initdelay = new ArrayList<>();
 	public static CompletableFuture<Void> exe(ServerPlayerEntity sender, LLMAPI Client, String message, String output){
 		/*if(config.MA)
 		{*/
@@ -70,22 +78,23 @@ public class Ai implements ModInitializer {
 							for (String cmd : cmds) {
 								String[] command=cmd.split("/");
 								String[] flags=command[1].split(" ");
-									tasks.add(command[0].trim());
 									players.add(sender);
 									delays.add(0);
 									maxdelays.add(Integer.parseInt(flags[0]));
 									times.add(Integer.parseInt(flags[1]));
 									initdelay.add(Integer.parseInt(flags[2]));
+								tasks.add(command[0].trim());
 								/*try{
-									dispatcher.execute(command[0],sender.getCommandSource());
+									dispatcher.execute(command[0].trim(),sender.getCommandSource());
 								}catch (CommandSyntaxException e){
-									if(num>=config.MATime){
-										num=0;
-										return CompletableFuture.completedFuture(null);
-									}
+									//if(num>=config.MATime){
+										//num=0;
+										//return CompletableFuture.completedFuture(null);
+									//}
 									Ai.LOGGER.error(e.getMessage());
-									num++;
-									return exe(sender,Client,e.getMessage(),e.getMessage());
+									return CompletableFuture.completedFuture(null);
+									//num++;
+									//return exe(sender,Client,e.getMessage(),e.getMessage());
 								}*/
 							}
 							//num = 0;
@@ -208,7 +217,7 @@ public class Ai implements ModInitializer {
 			}
 			delays.set(i,a-1);
 		}
-		for (int j:destroy )
+		for (int j =destroy.size()-1;j>=0;j--)
 		{
 			tasks.remove(j);
 			delays.remove(j);

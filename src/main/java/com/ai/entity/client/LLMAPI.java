@@ -308,15 +308,20 @@ public class LLMAPI {
         Ai.LOGGER.info("Continue");
         if(!this.messages.isEmpty()){
             ChatCompletionMessageParam lastMessage = this.messages.getLast();
-
+            Ai.LOGGER.info(lastMessage.toString());
+            int i = this.messages.size()-1;
             if (lastMessage.isAssistant()) {
                 //this.messages.removeLast();
                 Ai.LOGGER.info("Last message is from assistant, continuing...");
                 // Continue the conversation by adding a new user message
                 //this.messages.add(ChatCompletionMessageParam.ofUser(ChatCompletionUserMessageParam.builder().content("继续生成,仅仅输出继续的内容即可,系统将自动合并").build()));
                 Call(this.God.getPos().toString(), "", "请继续生成,仅仅输出继续的内容即可,系统将自动合并",sender);
-                this.messages.remove(this.messages.size()-2); // Remove the last user message to avoid duplication
-                //this.messages.
+                this.messages.remove(this.messages.size()-2); // Remove the COntinue message
+                this.messages.remove(this.messages.size()-2); // Remove the first assistant message
+                ChatCompletionMessageParam thisMessage = this.messages.getLast();
+                Ai.LOGGER.info("Merged last two assistant messages.\n %s".formatted(lastMessage.assistant().get().content().get().asText()+thisMessage.assistant().get().content().get().asText()));
+                PutMessages("assistant",lastMessage.assistant().get().content().get().asText()+thisMessage.assistant().get().content().get().asText(), this.messages);
+
             }else{
                 Ai.LOGGER.warn("Last message is not from assistant, cannot continue.");
                 return;

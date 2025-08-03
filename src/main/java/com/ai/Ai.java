@@ -228,7 +228,7 @@ public class Ai implements ModInitializer {
 			}
 			delays.set(i,a-1);
 		}
-		for (int j =destroy.size()-1;j>=0;j--)
+		for (int j : destroy)
 		{
 			tasks.remove(j);
 			delays.remove(j);

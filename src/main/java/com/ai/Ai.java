@@ -210,6 +210,8 @@ public class Ai implements ModInitializer {
 					maxdelays.clear();
 					times.clear();
 					players.clear();
+					destroy.clear();
+					initdelay.clear();
 					return;
 				}
 
@@ -233,6 +235,7 @@ public class Ai implements ModInitializer {
 			maxdelays.remove(j);
 			times.remove(j);
 			players.remove(j);
+			initdelay.remove(j);
 		}
 		destroy.clear();
 	}

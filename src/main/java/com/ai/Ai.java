@@ -210,6 +210,7 @@ public class Ai implements ModInitializer {
 					maxdelays.clear();
 					times.clear();
 					players.clear();
+					return;
 				}
 
 

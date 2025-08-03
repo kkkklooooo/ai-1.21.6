@@ -128,11 +128,7 @@ public class LLMAPI {
 
                     .forEach(ct->{
                         if(ct.choices().getFirst().delta().content().get()==""){
-                            if(ct.choices().getFirst().finishReason().get()==ChatCompletionChunk.Choice.FinishReason.STOP){
-                                Ai.LOGGER.warn("Finish Reason: STOP");
-                                sR.stream().close();
-                                sR.close();
-                            }
+
                             reasoning+=ct.choices().getFirst().delta()._additionalProperties().get("reasoning_content")==null?"":ct.choices().getFirst().delta()._additionalProperties().get("reasoning_content");
                             //res+=ct;
                             Ai.LOGGER.info(reasoning);

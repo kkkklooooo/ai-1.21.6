@@ -198,7 +198,7 @@ public class Ai implements ModInitializer {
 					Ai.LOGGER.error(e.getMessage());
 					if(config.MA&&num<Ai.config.MATime)
 					{
-						exe(players.get(i),Aiclient.Client,e.getMessage(),e.getMessage());
+						exe(players.get(i),Aiclient.Client,"",e.getMessage());
 						num++;
 					}
 					else if(num>=Ai.config.MATime)
@@ -210,6 +210,7 @@ public class Ai implements ModInitializer {
 					maxdelays.clear();
 					times.clear();
 					players.clear();
+					return;
 				}
 
 

@@ -78,7 +78,9 @@ public class Aiclient implements ClientModInitializer {
                 if(message.getContent().getString().endsWith("...")){
 
                     Ai.LOGGER.info("继续");
-                }else{
+                } else if (message.getContent().getString().endsWith("continue")) {
+                    Client.Continue();
+                } else{
 
                     exe(sender,Client,inp,"");
                     inp="";

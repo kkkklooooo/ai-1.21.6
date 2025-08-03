@@ -125,8 +125,14 @@ public class LLMAPI {
                     //.peek(CCA::accumulate)
                     //.flatMap(c->c.choices().stream())
                     //.flatMap(c->c.delta().content().stream())
+
                     .forEach(ct->{
                         if(ct.choices().getFirst().delta().content().get()==""){
+                            if(ct.choices().getFirst().finishReason().get()==ChatCompletionChunk.Choice.FinishReason.STOP){
+                                Ai.LOGGER.warn("Finish Reason: STOP");
+                                sR.stream().close();
+                                sR.close();
+                            }
                             reasoning+=ct.choices().getFirst().delta()._additionalProperties().get("reasoning_content")==null?"":ct.choices().getFirst().delta()._additionalProperties().get("reasoning_content");
                             //res+=ct;
                             Ai.LOGGER.info(reasoning);
@@ -135,15 +141,6 @@ public class LLMAPI {
                                 God.setCustomNameVisible(true);
                                 God.setCustomName(Text.of(reasoning.substring(Math.max(reasoning.length() - 11, 0),reasoning.length()-1)));
                             }
-                            /*
-                            sender.getServer().execute(
-                                    ()->{
-                                        Ai.LOGGER.info(reasoning);
-                                        Text actionBarText = Text.literal(reasoning);
-                                        OverlayMessageS2CPacket pk= new OverlayMessageS2CPacket(actionBarText);
-                                        sender.networkHandler.sendPacket(pk);
-                                    }
-                            );*/
                         }else{
                             res+=String.valueOf(ct.choices().getFirst().delta().content().get());
                             //res+=ct;
@@ -161,6 +158,10 @@ public class LLMAPI {
 
 
                     });
+            Ai.LOGGER.info("Streamed");
+
+        }catch (Exception e){
+            Ai.LOGGER.error("Error during streaming: %s".formatted(e.getMessage()));
         }
         if(God!=null){
             God.setCustomNameVisible(false);
@@ -301,5 +302,28 @@ public class LLMAPI {
         this.messages.clear();
 
         AddSys(this.messages);
+    }
+
+    public void Continue(ServerPlayerEntity sender) {
+        Ai.LOGGER.info("Continue");
+        if(!this.messages.isEmpty()){
+            ChatCompletionMessageParam lastMessage = this.messages.getLast();
+
+            if (lastMessage.isAssistant()) {
+                //this.messages.removeLast();
+                Ai.LOGGER.info("Last message is from assistant, continuing...");
+                // Continue the conversation by adding a new user message
+                //this.messages.add(ChatCompletionMessageParam.ofUser(ChatCompletionUserMessageParam.builder().content("继续生成,仅仅输出继续的内容即可,系统将自动合并").build()));
+                Call(this.God.getPos().toString(), "", "请继续生成,仅仅输出继续的内容即可,系统将自动合并",sender);
+                this.messages.remove(this.messages.size()-2); // Remove the last user message to avoid duplication
+                //this.messages.
+            }else{
+                Ai.LOGGER.warn("Last message is not from assistant, cannot continue.");
+                return;
+            }
+        }else{
+            Ai.LOGGER.warn("No messages to continue from.");
+        }
+        //AddSys(this.messages);
     }
 }

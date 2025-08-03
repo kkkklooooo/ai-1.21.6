@@ -9,6 +9,6 @@
   "text.autoconfig.modid.option.CALLWORD1": "EXAMPLE CALLWORD",
   "text.autoconfig.modid.option.AiModel": "CALLWORD MODEL",
   "text.autoconfig.modid.option.MA": "(Experimental and High Consumption) Multiple Attempt(Require reboot Minecraft)",
-  "text.autoconfig.modid.option.MATime": "(Experimental and High Consumption) Multiple Attempt Times(Require reboot Minecraft)",
+  "text.autoconfig.modid.option.MATime": "(Experimental and High Consumption) Attempt Times(Require reboot Minecraft)",
   "entity.ai.aie": "AIE"
 }

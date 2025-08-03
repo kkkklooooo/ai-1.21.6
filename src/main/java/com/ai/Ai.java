@@ -196,7 +196,15 @@ public class Ai implements ModInitializer {
 					dispatcher.execute(tasks.get(i),players.get(i).getCommandSource());
 				}catch (CommandSyntaxException e){
 					Ai.LOGGER.error(e.getMessage());
-					exe(players.get(i),Aiclient.Client,e.getMessage(),e.getMessage());
+					if(config.MA&&num<Ai.config.MATime)
+					{
+						exe(players.get(i),Aiclient.Client,e.getMessage(),e.getMessage());
+						num++;
+					}
+					else if(num>=Ai.config.MATime)
+					{
+						num=0;
+					}
 					tasks.clear();
 					delays.clear();
 					maxdelays.clear();

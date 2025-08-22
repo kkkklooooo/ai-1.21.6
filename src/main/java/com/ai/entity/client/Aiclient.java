@@ -215,12 +215,14 @@ public class Aiclient implements ClientModInitializer {
                 // 获取副手物品
                 ItemStack offHandItem = player.getOffHandStack();
                 String list = "";
-                for (int i = 0; i < 9; i++) {
+                for (int i = 0; i < 3; i++) {
                     ItemStack ii=player.getInventory().getMainStacks().get(i);
                     Identifier itemId = Registries.ITEM.getId(ii.getItem());
                     player.sendMessage(Text.literal("副手物品原始名称: " + itemId.toString().replaceFirst("minecraft:","")),true);
                     ii.decrement(1);
-                    list=String.join(list, itemId.toString().replaceFirst("minecraft:",""),",");
+                    //list=String.join(list, itemId.toString().replaceFirst("minecraft:",""),",");
+                    list+=itemId.toString().replaceFirst("minecraft:","");
+                    list+=",";
                 }
                 LLMAPI a = new LLMAPI("http://127.0.0.1:8848/v1","1","qwen3-235b-a22b");
                 Token2Sentence(list,a).thenAccept(s -> {
@@ -315,7 +317,7 @@ public class Aiclient implements ClientModInitializer {
             String origin = mes;
             Random rdm = new Random();
             TransApi a= new TransApi("20220320001132784","hoxqpxmxz_AYoWKq7uaV");
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < 4; i++) {
                 int index = rdm.nextInt(LangList.length);
                 String target = LangList[index];
                 try{

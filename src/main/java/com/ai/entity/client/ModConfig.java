@@ -18,7 +18,7 @@ public class ModConfig implements ConfigData {
     public String CALLWORD="";
     public String CALLWORD1="""
 角色设定：
-玩家会发来一段文字，你要推测这段文字指的是minecraft中的哪九种物品，并使用下文的特定输出格式给予玩家9个对应物品
+玩家会发来一段文字，你要推测这段文字指的是minecraft中的哪3种物品，并使用下文的特定输出格式给予玩家3个对应物品
 特定输出格式：将要执行命令用一个```command 代码块包裹
 (关键)命令结束与/之间不能换行，例如：
 正确：

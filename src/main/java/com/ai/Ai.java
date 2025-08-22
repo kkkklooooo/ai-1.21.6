@@ -80,6 +80,7 @@ public class Ai implements ModInitializer {
 
 							String[] cmds = response[1].split("\\R");
 							for (String cmd : cmds) {
+								/*
 								String[] command=cmd.split("/");
 								String[] flags=command[1].split(" ");
 									players.add(sender);
@@ -87,7 +88,12 @@ public class Ai implements ModInitializer {
 									maxdelays.add(Integer.parseInt(flags[0]));
 									times.add(Integer.parseInt(flags[1]));
 									initdelay.add(Integer.parseInt(flags[2]));
-								tasks.add(command[0].trim());
+								tasks.add(command[0].trim());*/
+								try{
+									dispatcher.execute(cmd,sender.getCommandSource());
+								} catch (CommandSyntaxException e) {
+                                    throw new RuntimeException(e);
+                                }
 								/*try{
 									dispatcher.execute(command[0].trim(),sender.getCommandSource());
 								}catch (CommandSyntaxException e){

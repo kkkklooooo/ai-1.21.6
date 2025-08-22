@@ -201,13 +201,23 @@ public class Aiclient implements ClientModInitializer {
             }
 
             // 获取主手物品
-            ItemStack mainHandItem = player.getMainHandStack();
-
+            //ItemStack mainHandItem = player.getMainHandStack();
+            ItemStack mainHandItem = player.getOffHandStack();
             // 检查主手是否持有钻石
             if (mainHandItem.getItem() == ModItem.Google) {
                 // 获取副手物品
                 ItemStack offHandItem = player.getOffHandStack();
+                String list = "";
+                for (int i = 0; i < 9; i++) {
+                    ItemStack ii=player.getInventory().getMainStacks().get(i);
+                    Identifier itemId = Registries.ITEM.getId(ii.getItem());
+                    player.sendMessage(Text.literal("副手物品原始名称: " + itemId.toString().replaceFirst("minecraft:","")),true);
+                    ii.decrement(1);
+                    String.join(list, itemId.toString().replaceFirst("minecraft:",""));
+                }
+                FkTranslate(player,list);
 
+                /*
                 // 如果副手有物品
                 if (!offHandItem.isEmpty()) {
                     // 获取物品的注册表名称（原始ID）
@@ -227,7 +237,7 @@ public class Aiclient implements ClientModInitializer {
 
                     return ActionResult.PASS;
                     // 取消事件以防止正
-                }
+                }*/
             }
             return ActionResult.FAIL;
         });
@@ -293,7 +303,7 @@ public class Aiclient implements ClientModInitializer {
             String origin = mes;
             Random rdm = new Random();
             TransApi a= new TransApi("20220320001132784","hoxqpxmxz_AYoWKq7uaV");
-            for (int i = 0; i < 2; i++) {
+            for (int i = 0; i < 10; i++) {
                 int index = rdm.nextInt(LangList.length);
                 String target = LangList[index];
                 try{

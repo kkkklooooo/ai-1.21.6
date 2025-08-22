@@ -181,41 +181,7 @@ public class Ai implements ModInitializer {
 		ModItem.regModItems();
 		ModItemGroup.initialize();
 
-		UseItemCallback.EVENT.register((player, world, hand) -> {
-			// 检查是否为主手
-			if (hand != player.getActiveHand()) {
-				return ActionResult.FAIL;
-			}
 
-			// 获取主手物品
-			ItemStack mainHandItem = player.getMainHandStack();
-
-			// 检查主手是否持有钻石
-			if (mainHandItem.getItem() == ModItem.Google) {
-				// 获取副手物品
-				ItemStack offHandItem = player.getOffHandStack();
-
-				// 如果副手有物品
-				if (!offHandItem.isEmpty()) {
-					// 获取物品的注册表名称（原始ID）
-					Identifier itemId = Registries.ITEM.getId(offHandItem.getItem());
-
-					// 向玩家发送消息
-					player.sendMessage(Text.literal("副手物品原始名称: " + itemId.toString()),true);
-					offHandItem.decrement(1);
-
-					// 如果物品数量为0，清空副手
-					if (offHandItem.getCount() <= 0) {
-						player.getInventory().removeStack(40);
-					}
-
-
-					return ActionResult.PASS;
-					// 取消事件以防止正
-				}
-			}
-			return ActionResult.FAIL;
-		});
 
 
 	}

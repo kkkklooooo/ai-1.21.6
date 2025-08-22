@@ -17,15 +17,20 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Identifier;
 import net.minidev.json.JSONObject;
 import org.lwjgl.glfw.GLFW;
 
@@ -164,14 +169,13 @@ public class Aiclient implements ClientModInitializer {
                 }
             }
 
-            if(message.getContent().getString().startsWith("fuckTrans")){
+            /*if(message.getContent().getString().startsWith("fuckTrans")){
                 //String res="";
                 FkTranslate(sender,message.getContent().getString().replace("fuckTrans ","")).thenApply(s -> s);
 
 
 
-            }
-
+            }*/
         }));
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.player != null && exampleKey.wasPressed()) {
@@ -185,6 +189,42 @@ public class Aiclient implements ClientModInitializer {
 
             }
 
+        });
+        UseItemCallback.EVENT.register((player, world, hand) -> {
+            // 检查是否为主手
+            if (hand != player.getActiveHand()) {
+                return ActionResult.FAIL;
+            }
+
+            // 获取主手物品
+            ItemStack mainHandItem = player.getMainHandStack();
+
+            // 检查主手是否持有钻石
+            if (mainHandItem.getItem() == ModItem.Google) {
+                // 获取副手物品
+                ItemStack offHandItem = player.getOffHandStack();
+
+                // 如果副手有物品
+                if (!offHandItem.isEmpty()) {
+                    // 获取物品的注册表名称（原始ID）
+                    Identifier itemId = Registries.ITEM.getId(offHandItem.getItem());
+
+                    // 向玩家发送消息
+                    player.sendMessage(Text.literal("副手物品原始名称: " + itemId.toString().replaceFirst("minecraft:","")),true);
+                    offHandItem.decrement(1);
+                    FkTranslate(player,itemId.toString().replaceFirst("minecraft:",""));
+
+                    // 如果物品数量为0，清空副手
+                    if (offHandItem.getCount() <= 0) {
+                        player.getInventory().removeStack(40);
+                    }
+
+
+                    return ActionResult.PASS;
+                    // 取消事件以防止正
+                }
+            }
+            return ActionResult.FAIL;
         });
 
 
@@ -243,7 +283,7 @@ public class Aiclient implements ClientModInitializer {
     //LLMAPI Client = new LLMAPI("https://openrouter.ai/api/v1/chat/completions","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","deepseek/deepseek-r1-0528:free");
 
 
-    public CompletableFuture<String> FkTranslate(ServerPlayerEntity plr,String mes){
+    public CompletableFuture<String> FkTranslate(PlayerEntity plr, String mes){
         return CompletableFuture.supplyAsync(()->{
             String origin = mes;
             Random rdm = new Random();
@@ -255,7 +295,7 @@ public class Aiclient implements ClientModInitializer {
 
                     JsonObject raw = JsonParser.parseString(a.getTransResult(origin,"auto",target)).getAsJsonObject();
                     origin = raw.get("trans_result").getAsJsonArray().get(0).getAsJsonObject().get("dst").toString();
-                    plr.getServer().sendMessage(Text.of("To %s:%s".formatted(target,origin)));
+                    plr.sendMessage(Text.of("谷歌生草机已帮您翻译成%s:%s".formatted(target,origin)),true);
                     LOGGER.warn("To %s:%s".formatted(target,origin));
                     Thread.sleep(2000);
                 } catch (Exception e) {
@@ -266,7 +306,7 @@ public class Aiclient implements ClientModInitializer {
             }
             JsonObject raw = JsonParser.parseString(a.getTransResult(origin,"auto","zh")).getAsJsonObject();
             origin = raw.get("trans_result").getAsJsonArray().get(0).getAsJsonObject().get("dst").toString();
-            plr.getServer().sendMessage(Text.of("To %s:%s".formatted("zh",origin)));
+            plr.sendMessage(Text.of("谷歌生草机已帮您翻译成%s:%s".formatted("zh",origin)),true);
             LOGGER.warn("To %s:%s".formatted("zh",origin));
             return origin;
         });

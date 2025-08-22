@@ -1,18 +1,13 @@
 package com.ai.entity.client;
 
 import com.ai.Ai;
-import com.ai.entity.custom.AIEnt;
+import com.ai.entity.custom.demo.TransApi;
 import com.ai.entity.entities;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.mojang.brigadier.CommandDispatcher;
-import com.openai.client.OpenAIClient;
-import com.openai.client.okhttp.OpenAIOkHttpClient;
-import com.openai.core.http.StreamResponse;
-import com.openai.helpers.ChatCompletionAccumulator;
-import com.openai.models.chat.completions.ChatCompletion;
-import com.openai.models.chat.completions.ChatCompletionChunk;
-import com.openai.models.chat.completions.ChatCompletionCreateParams;
 import me.shedaniel.autoconfig.AutoConfig;
-import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
@@ -28,14 +23,18 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
+import net.minidev.json.JSONObject;
 import org.lwjgl.glfw.GLFW;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
+import java.util.Random;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.ai.Ai.*;
 import static com.ai.entity.client.FileStorage.getModStorageDir;
@@ -45,6 +44,7 @@ public class Aiclient implements ClientModInitializer {
 
     public static String inp="";
 
+    private static final String[] LangList = new String[]{"zh", "en", "yue", "wyw", "jp", "kor", "fra", "spa", "th", "ara", "ru", "pt", "de", "it", "el", "nl", "pl", "bul", "est", "dan", "fin", "cs", "rom", "slo", "swe", "hu", "cht", "vie"};
 
     private static KeyBinding exampleKey;
     public static LLMAPI Client;
@@ -163,6 +163,15 @@ public class Aiclient implements ClientModInitializer {
                     inp="";
                 }
             }
+
+            if(message.getContent().getString().startsWith("fuckTrans")){
+                //String res="";
+                FkTranslate(sender,message.getContent().getString().replace("fuckTrans ","")).thenApply(s -> s);
+
+
+
+            }
+
         }));
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.player != null && exampleKey.wasPressed()) {
@@ -232,6 +241,32 @@ public class Aiclient implements ClientModInitializer {
         Client = new LLMAPI(data.URL, data.KEY, data.MODEL);
     }
     //LLMAPI Client = new LLMAPI("https://openrouter.ai/api/v1/chat/completions","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","deepseek/deepseek-r1-0528:free");
+
+
+    public CompletableFuture<String> FkTranslate(ServerPlayerEntity plr,String mes){
+        return CompletableFuture.supplyAsync(()->{
+            String origin = mes;
+            Random rdm = new Random();
+            TransApi a= new TransApi("20220320001132784","hoxqpxmxz_AYoWKq7uaV");
+            for (int i = 0; i < 5; i++) {
+                int index = rdm.nextInt(LangList.length);
+                String target = LangList[index];
+                try{
+                    JsonObject raw = JsonParser.parseString(a.getTransResult(origin,"auto",target)).getAsJsonObject();
+
+                    origin = raw.get("trans_result").getAsJsonArray().get(0).getAsJsonObject().get("dst").toString();
+                    plr.getServer().sendMessage(Text.of("To %s:%s".formatted(target,origin)));
+                    LOGGER.warn("To %s:%s".formatted(target,origin));
+                    Thread.sleep(2000);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+
+
+            }
+            return origin;
+        });
+    }
 
 
 

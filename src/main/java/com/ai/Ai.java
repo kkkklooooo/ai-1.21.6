@@ -1,9 +1,6 @@
 package com.ai;
 
-import com.ai.entity.client.Aiclient;
-import com.ai.entity.client.FileStorage;
-import com.ai.entity.client.LLMAPI;
-import com.ai.entity.client.ModConfig;
+import com.ai.entity.client.*;
 
 import com.ai.entity.custom.AIEnt;
 import com.ai.entity.entities;
@@ -174,71 +171,69 @@ public class Ai implements ModInitializer {
 		);
 		ServerTickEvents.START_SERVER_TICK.register(this::OnServerTick);
 
+		ModItem.regModItems();
+		ModItemGroup.initialize();
 
 
 	}
 	public void OnServerTick(MinecraftServer server)
 	{
-		for(int i=0;i<tasks.size();i++)
-		{
-			if(initdelay.get(i)>0)
-			{
-				int a = initdelay.get(i);
-				initdelay.set(i,a-1);
-				continue;
-			}
-			int a =delays.get(i);
-			if(a==1||a==0)
-			{
-				CommandDispatcher<ServerCommandSource> dispatcher =
-						players.get(i).getServer().getCommandManager().getDispatcher();
-				try{
-					dispatcher.execute(tasks.get(i),players.get(i).getCommandSource());
-				}catch (CommandSyntaxException e){
-					Ai.LOGGER.error(e.getMessage());
-					if(config.MA&&num<Ai.config.MATime)
-					{
-						exe(players.get(i),Aiclient.Client,"",e.getMessage());
-						num++;
-					}
-					else if(num>=Ai.config.MATime)
-					{
-						num=0;
-					}
-					tasks.clear();
-					delays.clear();
-					maxdelays.clear();
-					times.clear();
-					players.clear();
-					destroy.clear();
-					initdelay.clear();
-					return;
-				}
-
-
-				int b = times.get(i);
-				if(b==1||b==0)
-				{
-					destroy.add(i);
+		try {
+			for (int i = 0; i < tasks.size(); i++) {
+				if (initdelay.get(i) > 0) {
+					int a = initdelay.get(i);
+					initdelay.set(i, a - 1);
 					continue;
 				}
-				times.set(i,b-1);
-				delays.set(i,maxdelays.get(i));
-				continue;
+				int a = delays.get(i);
+				if (a == 1 || a == 0) {
+					CommandDispatcher<ServerCommandSource> dispatcher =
+							players.get(i).getServer().getCommandManager().getDispatcher();
+					try {
+						dispatcher.execute(tasks.get(i), players.get(i).getCommandSource());
+					} catch (CommandSyntaxException e) {
+						Ai.LOGGER.error(e.getMessage());
+						if (config.MA && num < Ai.config.MATime) {
+							exe(players.get(i), Aiclient.Client, "", e.getMessage());
+							num++;
+						} else if (num >= Ai.config.MATime) {
+							num = 0;
+						}
+						tasks.clear();
+						delays.clear();
+						maxdelays.clear();
+						times.clear();
+						players.clear();
+						destroy.clear();
+						initdelay.clear();
+						return;
+					}
+
+
+					int b = times.get(i);
+					if (b == 1 || b == 0) {
+						destroy.add(i);
+						continue;
+					}
+					times.set(i, b - 1);
+					delays.set(i, maxdelays.get(i));
+					continue;
+				}
+				delays.set(i, a - 1);
 			}
-			delays.set(i,a-1);
-		}
-		for (int j : destroy)
-		{
-			tasks.remove(j);
-			delays.remove(j);
-			maxdelays.remove(j);
-			times.remove(j);
-			players.remove(j);
-			initdelay.remove(j);
-		}
-		destroy.clear();
-	}
+			for (int j : destroy) {
+				tasks.remove(j);
+				delays.remove(j);
+				maxdelays.remove(j);
+				times.remove(j);
+				players.remove(j);
+				initdelay.remove(j);
+			}
+			destroy.clear();
+		} catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
 

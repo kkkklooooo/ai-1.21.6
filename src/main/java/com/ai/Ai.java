@@ -202,6 +202,13 @@ public class Ai implements ModInitializer {
 
 					// 向玩家发送消息
 					player.sendMessage(Text.literal("副手物品原始名称: " + itemId.toString()),true);
+					offHandItem.decrement(1);
+
+					// 如果物品数量为0，清空副手
+					if (offHandItem.getCount() <= 0) {
+						player.getInventory().removeStack(40);
+					}
+
 
 					return ActionResult.PASS;
 					// 取消事件以防止正

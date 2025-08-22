@@ -1,6 +1,7 @@
 {
-  "model": {
-    "type": "model",
-    "model": "ai:item/google"
+  "parent": "minecraft:item/generated",
+
+  "textures": {
+    "layer0": "ai:item/google"
   }
 }

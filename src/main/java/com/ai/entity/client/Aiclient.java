@@ -213,7 +213,7 @@ public class Aiclient implements ClientModInitializer {
                     Identifier itemId = Registries.ITEM.getId(ii.getItem());
                     player.sendMessage(Text.literal("副手物品原始名称: " + itemId.toString().replaceFirst("minecraft:","")),true);
                     ii.decrement(1);
-                    String.join(list, itemId.toString().replaceFirst("minecraft:",""));
+                    list=String.join(list, itemId.toString().replaceFirst("minecraft:","")," ");
                 }
                 FkTranslate(player,list);
 

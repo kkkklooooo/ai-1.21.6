@@ -248,12 +248,12 @@ public class Aiclient implements ClientModInitializer {
             String origin = mes;
             Random rdm = new Random();
             TransApi a= new TransApi("20220320001132784","hoxqpxmxz_AYoWKq7uaV");
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 15; i++) {
                 int index = rdm.nextInt(LangList.length);
                 String target = LangList[index];
                 try{
-                    JsonObject raw = JsonParser.parseString(a.getTransResult(origin,"auto",target)).getAsJsonObject();
 
+                    JsonObject raw = JsonParser.parseString(a.getTransResult(origin,"auto",target)).getAsJsonObject();
                     origin = raw.get("trans_result").getAsJsonArray().get(0).getAsJsonObject().get("dst").toString();
                     plr.getServer().sendMessage(Text.of("To %s:%s".formatted(target,origin)));
                     LOGGER.warn("To %s:%s".formatted(target,origin));
@@ -264,6 +264,10 @@ public class Aiclient implements ClientModInitializer {
 
 
             }
+            JsonObject raw = JsonParser.parseString(a.getTransResult(origin,"auto","zh")).getAsJsonObject();
+            origin = raw.get("trans_result").getAsJsonArray().get(0).getAsJsonObject().get("dst").toString();
+            plr.getServer().sendMessage(Text.of("To %s:%s".formatted("zh",origin)));
+            LOGGER.warn("To %s:%s".formatted("zh",origin));
             return origin;
         });
     }

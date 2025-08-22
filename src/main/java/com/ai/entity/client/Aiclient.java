@@ -7,6 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
@@ -122,7 +123,12 @@ public class Aiclient implements ClientModInitializer {
                 CommandDispatcher<ServerCommandSource> dispatcher =
                         sender.getServer().getCommandManager().getDispatcher();
                 String[] cmds = message.getContent().getString().replaceAll("aiedebug","").trim().split(";");
+
                 for (String cmd : cmds) {
+                    try{dispatcher.execute(cmd,sender.getCommandSource());} catch (CommandSyntaxException e) {
+                        throw new RuntimeException(e);
+                    }
+                    /*
                     String[] command=cmd.split("/");
                     String[] flags=command[1].split(" ");
                     players.add(sender);
@@ -130,7 +136,7 @@ public class Aiclient implements ClientModInitializer {
                     maxdelays.add(Integer.parseInt(flags[0]));
                     times.add(Integer.parseInt(flags[1]));
                     initdelay.add(Integer.parseInt(flags[2]));
-                    tasks.add(command[0].trim());
+                    tasks.add(command[0].trim());*/
 								/*try{
 									dispatcher.execute(command[0].trim(),sender.getCommandSource());
 								}catch (CommandSyntaxException e){
@@ -144,7 +150,8 @@ public class Aiclient implements ClientModInitializer {
 									//return exe(sender,Client,e.getMessage(),e.getMessage());
 								}*/
                 }
-            }
+
+        }
             if(message.getContent().getString().startsWith("aiewrite"))
             {
                 DataWriter.writeGlobalData(message.getContent().getString().replace("aiewrite","").trim(), ((ModConfig)ch.getConfig()).CALLWORD);

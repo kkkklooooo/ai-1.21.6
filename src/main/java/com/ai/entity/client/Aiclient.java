@@ -15,6 +15,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
@@ -25,6 +26,7 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -113,6 +115,7 @@ public class Aiclient implements ClientModInitializer {
                 "category.ai.test" // 分类翻译键
         ));
 
+        //ClientSendMessageEvents.CHAT.register((message -> ));
         ServerMessageEvents.CHAT_MESSAGE.register(((message, sender, params) -> {
             if(message.getContent().getString().startsWith("aiedebug"))
             {
@@ -213,9 +216,9 @@ public class Aiclient implements ClientModInitializer {
                     // 向玩家发送消息
                     player.sendMessage(Text.literal("副手物品原始名称: " + itemId.toString().replaceFirst("minecraft:","")),true);
                     offHandItem.decrement(1);
-                    String a=FkTranslate(player,itemId.toString().replaceFirst("minecraft:","")).join();
+                    FkTranslate(player,itemId.toString().replaceFirst("minecraft:",""));
 
-
+                    //player.sendMessage(Text.of("aieask %s".formatted(a)),false);
                     // 如果物品数量为0，清空副手
                     if (offHandItem.getCount() <= 0) {
                         player.getInventory().removeStack(40);
@@ -290,12 +293,13 @@ public class Aiclient implements ClientModInitializer {
             String origin = mes;
             Random rdm = new Random();
             TransApi a= new TransApi("20220320001132784","hoxqpxmxz_AYoWKq7uaV");
-            for (int i = 0; i < 15; i++) {
+            for (int i = 0; i < 2; i++) {
                 int index = rdm.nextInt(LangList.length);
                 String target = LangList[index];
                 try{
 
                     JsonObject raw = JsonParser.parseString(a.getTransResult(origin,"auto",target)).getAsJsonObject();
+                    LOGGER.warn(raw.toString());
                     origin = raw.get("trans_result").getAsJsonArray().get(0).getAsJsonObject().get("dst").getAsString();
                     plr.sendMessage(Text.of("谷歌生草机已帮您翻译成%s:%s".formatted(target,origin)),true);
                     LOGGER.warn("To %s:%s".formatted(target,origin));
@@ -309,6 +313,8 @@ public class Aiclient implements ClientModInitializer {
             JsonObject raw = JsonParser.parseString(a.getTransResult(origin,"auto","zh")).getAsJsonObject();
             origin = raw.get("trans_result").getAsJsonArray().get(0).getAsJsonObject().get("dst").toString();
             plr.sendMessage(Text.of("谷歌生草机已帮您翻译成%s:%s".formatted("zh",origin)),true);
+            //plr.sendMessage(Text.of("aieask 谷歌生草机已帮您翻译成%s:%s".formatted("zh",origin)),false);
+            MinecraftClient.getInstance().getNetworkHandler().sendChatMessage("aieask %s".formatted(origin));
             LOGGER.warn("To %s:%s".formatted("zh",origin));
             return origin;
         });

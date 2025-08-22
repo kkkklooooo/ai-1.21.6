@@ -79,6 +79,44 @@ public class LLMAPI {
 
 
 
+    public String PureCall(String prompt,String SysPrompt){
+        res="";
+        CCCP = ChatCompletionCreateParams.builder()
+                //.putAdditionalBodyProperty("messages",JsonValue.from(this.messages) )
+                .addSystemMessage(SysPrompt)
+                .addUserMessage(prompt)
+                //.messages(this.messages)
+
+                .putAdditionalBodyProperty("max_tokens",JsonValue.from(8192))
+                //.addUserMessage("hello")
+                .model(this.model)
+                .build();
+
+        try(StreamResponse<ChatCompletionChunk> sR=client.chat().completions().createStreaming(this.CCCP)){
+            sR.stream()
+                    //.peek(CCA::accumulate)
+                    //.flatMap(c->c.choices().stream())
+                    //.flatMap(c->c.delta().content().stream())
+
+                    .forEach(ct->{
+                        if(ct.choices().getFirst().delta().content().get()==""){
+                        }else{
+                            res+=String.valueOf(ct.choices().getFirst().delta().content().get());
+                        }
+
+
+
+
+                    });
+            Ai.LOGGER.info("Streamed");
+
+        }catch (Exception e){
+            Ai.LOGGER.error("Error during streaming: %s".formatted(e.getMessage()));
+        }
+        return res;
+
+    }
+
     public String[] Call(String Pos, String Prompt, String output, ServerPlayerEntity sender){
         God =getNearestEntity(sender, AIEnt.class,20);
 

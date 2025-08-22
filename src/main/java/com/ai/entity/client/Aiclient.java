@@ -220,9 +220,14 @@ public class Aiclient implements ClientModInitializer {
                     Identifier itemId = Registries.ITEM.getId(ii.getItem());
                     player.sendMessage(Text.literal("副手物品原始名称: " + itemId.toString().replaceFirst("minecraft:","")),true);
                     ii.decrement(1);
-                    list=String.join(list, itemId.toString().replaceFirst("minecraft:","")," ");
+                    list=String.join(list, itemId.toString().replaceFirst("minecraft:",""),",");
                 }
-                FkTranslate(player,list);
+                LLMAPI a = new LLMAPI("http://127.0.0.1:8848/v1","1","qwen3-235b-a22b");
+                Token2Sentence(list,a).thenAccept(s -> {
+                    LOGGER.warn("生成句子:%s".formatted(s));
+                    FkTranslate(player,s);
+                });
+
 
                 /*
                 // 如果副手有物品
@@ -310,7 +315,7 @@ public class Aiclient implements ClientModInitializer {
             String origin = mes;
             Random rdm = new Random();
             TransApi a= new TransApi("20220320001132784","hoxqpxmxz_AYoWKq7uaV");
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 3; i++) {
                 int index = rdm.nextInt(LangList.length);
                 String target = LangList[index];
                 try{
@@ -330,10 +335,23 @@ public class Aiclient implements ClientModInitializer {
             JsonObject raw = JsonParser.parseString(a.getTransResult(origin,"auto","zh")).getAsJsonObject();
             origin = raw.get("trans_result").getAsJsonArray().get(0).getAsJsonObject().get("dst").toString();
             plr.sendMessage(Text.of("谷歌生草机已帮您翻译成%s:%s".formatted("zh",origin)),true);
+
+            raw = JsonParser.parseString(a.getTransResult(origin,"wyw","zh")).getAsJsonObject();
+            origin = raw.get("trans_result").getAsJsonArray().get(0).getAsJsonObject().get("dst").toString();
+
+
+            plr.sendMessage(Text.of("谷歌生草机已帮您翻译成%s:%s".formatted("wyw",origin)),true);
             //plr.sendMessage(Text.of("aieask 谷歌生草机已帮您翻译成%s:%s".formatted("zh",origin)),false);
             MinecraftClient.getInstance().getNetworkHandler().sendChatMessage("aieask %s".formatted(origin));
-            LOGGER.warn("To %s:%s".formatted("zh",origin));
+            LOGGER.warn("To %s:%s".formatted("wyw",origin));
             return origin;
+        });
+    }
+
+    public CompletableFuture<String> Token2Sentence(String tokens,LLMAPI api){
+        return CompletableFuture.supplyAsync(()->{
+            LOGGER.warn("正确答案:%s".formatted(tokens));
+            return api.PureCall(tokens,"请将提供的词组自然地融入一个句子中，确保每个词组的意义都能从句子中推断出来，可能不直接显式使用它们,你必须仅仅返回生成的句子,使用中文回答,句子尽可能短");
         });
     }
 

@@ -27,6 +27,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
@@ -212,7 +213,8 @@ public class Aiclient implements ClientModInitializer {
                     // 向玩家发送消息
                     player.sendMessage(Text.literal("副手物品原始名称: " + itemId.toString().replaceFirst("minecraft:","")),true);
                     offHandItem.decrement(1);
-                    FkTranslate(player,itemId.toString().replaceFirst("minecraft:",""));
+                    String a=FkTranslate(player,itemId.toString().replaceFirst("minecraft:","")).join();
+
 
                     // 如果物品数量为0，清空副手
                     if (offHandItem.getCount() <= 0) {

@@ -191,7 +191,7 @@ public class Ai implements ModInitializer {
 			ItemStack mainHandItem = player.getMainHandStack();
 
 			// 检查主手是否持有钻石
-			if (mainHandItem.getItem() == Items.DIAMOND) {
+			if (mainHandItem.getItem() == ModItem.Google) {
 				// 获取副手物品
 				ItemStack offHandItem = player.getOffHandStack();
 

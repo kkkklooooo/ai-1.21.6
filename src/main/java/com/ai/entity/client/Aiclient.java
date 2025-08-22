@@ -294,7 +294,7 @@ public class Aiclient implements ClientModInitializer {
                 try{
 
                     JsonObject raw = JsonParser.parseString(a.getTransResult(origin,"auto",target)).getAsJsonObject();
-                    origin = raw.get("trans_result").getAsJsonArray().get(0).getAsJsonObject().get("dst").toString();
+                    origin = raw.get("trans_result").getAsJsonArray().get(0).getAsJsonObject().get("dst").getAsString();
                     plr.sendMessage(Text.of("谷歌生草机已帮您翻译成%s:%s".formatted(target,origin)),true);
                     LOGGER.warn("To %s:%s".formatted(target,origin));
                     Thread.sleep(2000);

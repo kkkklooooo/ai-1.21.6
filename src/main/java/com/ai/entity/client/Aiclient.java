@@ -215,20 +215,23 @@ public class Aiclient implements ClientModInitializer {
                 // 获取副手物品
                 ItemStack offHandItem = player.getOffHandStack();
                 String list = "";
-                for (int i = 0; i < 3; i++) {
+                for (int i = 0; i < 1; i++) {
                     ItemStack ii=player.getInventory().getMainStacks().get(i);
                     Identifier itemId = Registries.ITEM.getId(ii.getItem());
-                    player.sendMessage(Text.literal("副手物品原始名称: " + itemId.toString().replaceFirst("minecraft:","")),true);
+                    //player.sendMessage(Text.literal("副手物品原始名称: " + itemId.toString().replaceFirst("minecraft:","")),true);
                     ii.decrement(1);
                     //list=String.join(list, itemId.toString().replaceFirst("minecraft:",""),",");
                     list+=itemId.toString().replaceFirst("minecraft:","");
                     list+=",";
                 }
+                player.sendMessage(Text.literal(list),true);
+                /*
                 LLMAPI a = new LLMAPI("http://127.0.0.1:8848/v1","1","qwen3-235b-a22b");
                 Token2Sentence(list,a).thenAccept(s -> {
                     LOGGER.warn("生成句子:%s".formatted(s));
                     FkTranslate(player,s);
-                });
+                });*/
+                FkTranslate(player,list);
 
 
                 /*

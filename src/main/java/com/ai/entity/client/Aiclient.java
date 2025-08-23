@@ -53,7 +53,7 @@ public class Aiclient implements ClientModInitializer {
 
     public static String inp="";
 
-    private static final String[] LangList = new String[]{"zh", "en", "yue", "wyw", "jp", "kor", "fra", "spa", "th", "ara", "ru", "pt", "de", "it", "el", "nl", "pl", "bul", "est", "dan", "fin", "cs", "rom", "slo", "swe", "hu", "cht", "vie"};
+    private static final String[] LangList = new String[]{"zh", "en", "yue", "wyw", "jp", "fra", "spa", "th", "ara", "ru", "pt", "de", "it", "el", "nl", "pl", "bul", "est", "dan", "fin", "cs", "rom", "slo", "swe", "hu", "cht", "vie"};
 
     private static KeyBinding exampleKey;
     public static LLMAPI Client;
@@ -317,7 +317,7 @@ public class Aiclient implements ClientModInitializer {
             String origin = mes;
             Random rdm = new Random();
             TransApi a= new TransApi("20220320001132784","hoxqpxmxz_AYoWKq7uaV");
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 9; i++) {
                 int index = rdm.nextInt(LangList.length);
                 String target = LangList[index];
                 try{
@@ -334,18 +334,24 @@ public class Aiclient implements ClientModInitializer {
 
 
             }
-            JsonObject raw = JsonParser.parseString(a.getTransResult(origin,"auto","zh")).getAsJsonObject();
+
+
+            JsonObject raw = JsonParser.parseString(a.getTransResult(origin,"auto","wyw")).getAsJsonObject();
+            origin = raw.get("trans_result").getAsJsonArray().get(0).getAsJsonObject().get("dst").toString();
+            plr.sendMessage(Text.of("谷歌生草机已帮您翻译成%s:%s".formatted("wyw",origin)),true);
+
+            raw = JsonParser.parseString(a.getTransResult(origin,"wyw","en")).getAsJsonObject();
+            origin = raw.get("trans_result").getAsJsonArray().get(0).getAsJsonObject().get("dst").toString();
+            plr.sendMessage(Text.of("谷歌生草机已帮您翻译成%s:%s".formatted("en",origin)),true);
+
+
+            raw = JsonParser.parseString(a.getTransResult(origin,"en","zh")).getAsJsonObject();
             origin = raw.get("trans_result").getAsJsonArray().get(0).getAsJsonObject().get("dst").toString();
             plr.sendMessage(Text.of("谷歌生草机已帮您翻译成%s:%s".formatted("zh",origin)),true);
 
-            raw = JsonParser.parseString(a.getTransResult(origin,"wyw","zh")).getAsJsonObject();
-            origin = raw.get("trans_result").getAsJsonArray().get(0).getAsJsonObject().get("dst").toString();
-
-
-            plr.sendMessage(Text.of("谷歌生草机已帮您翻译成%s:%s".formatted("wyw",origin)),true);
             //plr.sendMessage(Text.of("aieask 谷歌生草机已帮您翻译成%s:%s".formatted("zh",origin)),false);
             MinecraftClient.getInstance().getNetworkHandler().sendChatMessage("1aieask %s".formatted(origin));
-            LOGGER.warn("To %s:%s".formatted("wyw",origin));
+            LOGGER.warn("To %s:%s".formatted("zh",origin));
             return origin;
         });
     }
@@ -353,7 +359,7 @@ public class Aiclient implements ClientModInitializer {
     public CompletableFuture<String> Token2Sentence(String tokens,LLMAPI api){
         return CompletableFuture.supplyAsync(()->{
             LOGGER.warn("正确答案:%s".formatted(tokens));
-            return api.PureCall(tokens,"请将提供的词组自然地融入句子中，确保每个词组的意义都能从句子中推断出来，可能不直接显式使用它们,你必须仅仅返回生成的句子,使用中文回答,句子尽可能短,词语在句中成分尽量重要,谷歌翻译20次也能推断");
+            return api.PureCall(tokens,"请将提供的词组融入句子中，确保每个词组的意义都能从句子中推断出来，可能不直接显式使用它们,你必须仅仅返回生成的句子,使用中文回答,句子尽可能短,词语在句中成分尽量重要,谷歌翻译20次也能推断,增加趣味元素,谷歌翻译20次后有节目效果");
         });
     }
 
